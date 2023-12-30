@@ -1,0 +1,24 @@
+name: Build and Deploy to cloudflare
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - run: npm run sb:build
+
+      - name: Deploy to cloudflare
+        uses: demosjarco/wrangler-action-node@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: pages deploy storybook-static --project-name=${{ secrets.PROJECT_NAME }}
