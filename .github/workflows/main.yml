@@ -1,0 +1,46 @@
+name: CI/CD Workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: "pnpm"
+
+      - run: pnpm install
+      - name: Run Vitest Tests
+        run: pnpm run test:run
+
+      - name: Build and Publish to npm
+        run: npm run build
+
+      - name: Npm registry authentication
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Publish
+        run: pnpm publish -r --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      - name: build storybook
+        run: pnpm run sb:build
+
+      - name: Deploy to cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: pages deploy storybook-static --project-name=${{ secrets.PROJECT_NAME }}

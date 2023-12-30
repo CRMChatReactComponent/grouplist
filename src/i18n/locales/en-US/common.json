@@ -1,0 +1,16 @@
+{
+  "deleteCurrentIcon": "Delete Current Icon",
+  "deleteCurrentColor": "Delete Current Color",
+  "changeBackgroundColor": "Change Background Color",
+  "changeTitle": "Change Title",
+  "presets": "Presets",
+  "deepColor": "Deep Colors",
+  "mildColor": "Mild Colors",
+  "lightColor": "Light Colors",
+  "delete": "Delete",
+  "deleteSuccessfully": "Deletion Successfully!",
+  "dangerOperation": "Danger Operation",
+  "confirmToDelete": "Are you sure you want to delete? This action cannot be undone!",
+  "cancelText": "Cancel",
+  "confirmText": "Confirm"
+}
