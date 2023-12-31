@@ -16,8 +16,7 @@ const meta = {
   title: "ListItem",
   component: ListItem,
   render: (props, context) => {
-    type CountdownHandle = ElementRef<typeof ListItem>;
-    const ListItemRef = useRef<CountdownHandle>(null);
+    const ListItemRef = useRef<ElementRef<typeof ListItem>>(null);
 
     useEffect(() => {
       context?.setMethodsPanel?.(

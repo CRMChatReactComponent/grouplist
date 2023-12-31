@@ -8,7 +8,7 @@ export const I18nContext = createContext<I18nContextType | null>(null);
 
 export function I18nContextCmp(props: { children: ReactNode }) {
   return (
-    <I18nextProvider i18n={i18nInstance} defaultNS={"translation"}>
+    <I18nextProvider i18n={i18nInstance} defaultNS={"common"}>
       <I18nContext.Provider value={{}}>{props.children}</I18nContext.Provider>
     </I18nextProvider>
   );

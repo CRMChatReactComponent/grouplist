@@ -12,6 +12,7 @@ import {
   SelectProps,
   Empty,
 } from "antd";
+import { AntdApiContextProviderCmp } from "../../src/context/AntdApiContext";
 import { I18nContextCmp } from "../../src/context/I18nContext";
 import { GenI18nEnum } from "../../src/i18n/genI18nEnum";
 import { TranslationOutlined } from "@ant-design/icons";
@@ -54,7 +55,7 @@ const withCanvasDecorators: Decorator = (Story) => {
         style={{
           width: "100vw",
           height: "100vh",
-          backgroundColor: isDarkTheme ? "#18191A" : "#fff",
+          backgroundColor: isDarkTheme ? "#18191A" : "#efefef",
         }}
       >
         <ConfigProvider
@@ -64,36 +65,38 @@ const withCanvasDecorators: Decorator = (Story) => {
               : theme.defaultAlgorithm,
           }}
         >
-          <Flex justify={"space-between"}>
-            <StoryBox>
-              <Story setMethodsPanel={setMethodsPanel} />
-            </StoryBox>
-            <MethodPanel $isDark={isDarkTheme}>
-              <Flex
-                vertical={true}
-                justify={"flex-start"}
-                style={{ height: "100%" }}
-              >
-                <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-                  Methods
-                </Title>
-                <MethodsBox>
-                  {methodsPanel ? (
-                    methodsPanel
-                  ) : (
-                    <Empty description={"没有任何方法"} />
-                  )}
-                </MethodsBox>
-                <Flex justify={"space-between"}>
-                  <SwitchLang />
-                  <SwitchDarkMode
-                    isDarkTheme={isDarkTheme}
-                    setIsDarkTheme={setIsDarkTheme}
-                  />
+          <AntdApiContextProviderCmp>
+            <Flex justify={"space-between"}>
+              <StoryBox>
+                <Story setMethodsPanel={setMethodsPanel} />
+              </StoryBox>
+              <MethodPanel $isDark={isDarkTheme}>
+                <Flex
+                  vertical={true}
+                  justify={"flex-start"}
+                  style={{ height: "100%" }}
+                >
+                  <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
+                    Methods
+                  </Title>
+                  <MethodsBox>
+                    {methodsPanel ? (
+                      methodsPanel
+                    ) : (
+                      <Empty description={"没有任何方法"} />
+                    )}
+                  </MethodsBox>
+                  <Flex justify={"space-between"}>
+                    <SwitchLang />
+                    <SwitchDarkMode
+                      isDarkTheme={isDarkTheme}
+                      setIsDarkTheme={setIsDarkTheme}
+                    />
+                  </Flex>
                 </Flex>
-              </Flex>
-            </MethodPanel>
-          </Flex>
+              </MethodPanel>
+            </Flex>
+          </AntdApiContextProviderCmp>
         </ConfigProvider>
       </div>
     </I18nContextCmp>
