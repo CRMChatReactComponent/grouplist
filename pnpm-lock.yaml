@@ -13,12 +13,12 @@ dependencies:
     version: 18.2.0(react@18.2.0)
 
 devDependencies:
-  '@ant-design/colors':
-    specifier: ^7.0.1
-    version: 7.0.1
   '@ant-design/icons':
     specifier: ^5.2.6
     version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
+  '@faker-js/faker':
+    specifier: ^8.3.1
+    version: 8.3.1
   '@storybook/addon-essentials':
     specifier: ^7.6.6
     version: 7.6.6(@types/react-dom@18.2.18)(@types/react@18.2.46)(react-dom@18.2.0)(react@18.2.0)
@@ -130,6 +130,9 @@ devDependencies:
   prettier:
     specifier: ^3.1.1
     version: 3.1.1
+  react-complex-tree:
+    specifier: ^2.3.2
+    version: 2.3.2(react@18.2.0)
   react-i18next:
     specifier: ^14.0.0
     version: 14.0.0(i18next@23.7.13)(react-dom@18.2.0)(react@18.2.0)
@@ -2072,6 +2075,11 @@ packages:
   /@eslint/js@8.56.0:
     resolution: {integrity: sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
+
+  /@faker-js/faker@8.3.1:
+    resolution: {integrity: sha512-FdgpFxY6V6rLZE9mmIBb9hM0xpfvQOSNOLnzolzKwsE1DH+gC7lEKV1p1IbR0lAYyvYd5a4u3qWJzowUkw1bIw==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
     dev: true
 
   /@fal-works/esbuild-plugin-global-externals@2.1.2:
@@ -9855,6 +9863,14 @@ packages:
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: true
+
+  /react-complex-tree@2.3.2(react@18.2.0):
+    resolution: {integrity: sha512-hLcJKjZVFEYBynbZX7eNcv0qPK+oM/K1p4lk1tTUTE6TJziFCHJ2PPRYOWGjIR0/uk97ibM5GhW2m5FlBKeAhg==}
+    peerDependencies:
+      react: '>=16.0.0'
+    dependencies:
+      react: 18.2.0
     dev: true
 
   /react-docgen-typescript@2.2.2(typescript@5.3.3):

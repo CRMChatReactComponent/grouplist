@@ -9,7 +9,7 @@ import {
   Button,
 } from "antd";
 import { GroupItemPropsType } from "@/components/GroupItem";
-import { ColorPresets } from "@/const/colorPresets";
+import { deepColor, mildColor, lightColor } from "@/const/colorPresets";
 import { AntdApiContext, AntdApiContextType } from "$/AntdApiContext";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -57,10 +57,19 @@ export function useActionDropdownProps(
         <ColorPicker
           showText={() => t("changeBackgroundColor")}
           size={"small"}
+          disabled={data.readonly}
           presets={[
             {
-              label: t("presets"),
-              colors: ColorPresets,
+              label: t("deepColor"),
+              colors: deepColor,
+            },
+            {
+              label: t("mildColor"),
+              colors: mildColor,
+            },
+            {
+              label: t("lightColor"),
+              colors: lightColor,
             },
           ]}
           defaultValue={data.backgroundColor ?? null}
@@ -118,6 +127,7 @@ export function useActionDropdownProps(
         />
       ),
       onClick() {
+        if (data.readonly) return;
         isColorPickerOpen.current = true;
       },
       key: ActionEnum.CHANGE_BG_COLOR,
@@ -130,6 +140,7 @@ export function useActionDropdownProps(
       icon: <DeleteOutlined />,
       key: ActionEnum.DELETE,
       danger: true,
+      disabled: data.readonly,
     },
   ];
 

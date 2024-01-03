@@ -17,30 +17,30 @@ type AvatarAndEmojiProps = {
   onEmojiChange?: (source: SourceType) => void;
 };
 
-const SIZE = 42;
+export const AVATAR_SIZE = 32;
 
 const EmojiDiv = styled.div<{ $disabled: boolean }>`
-  width: ${SIZE}px;
-  height: ${SIZE}px;
-  font-size: ${SIZE}px;
-  line-height: ${SIZE}px;
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE}px;
+  font-size: ${AVATAR_SIZE}px;
+  line-height: ${AVATAR_SIZE}px;
   cursor: ${(p) => (p.$disabled ? "default" : "pointer")};
 `;
 
 const AvatarDiv = styled.div`
   position: relative;
-  width: ${SIZE}px;
-  height: ${SIZE}px;
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE}px;
 `;
 
 const AbsoluteEmojiDiv = styled.div<{ $disabled: boolean }>`
   position: absolute;
   right: -7px;
-  top: -7px;
-  width: ${SIZE / 2}px;
-  height: ${SIZE / 2}px;
-  font-size: ${SIZE / 2}px;
-  line-height: ${SIZE / 2}px;
+  top: -3px;
+  width: ${AVATAR_SIZE / 2}px;
+  height: ${AVATAR_SIZE / 2}px;
+  font-size: ${AVATAR_SIZE / 2}px;
+  line-height: ${AVATAR_SIZE / 2}px;
   cursor: ${(p) => (p.$disabled ? "default" : "pointer")};
 `;
 
@@ -71,7 +71,7 @@ const AvatarAndEmoji: FC<AvatarAndEmojiProps> = ({
           <Emoji
             unified={emojiText}
             emojiStyle={EmojiStyle.FACEBOOK}
-            size={SIZE}
+            size={AVATAR_SIZE}
           />
         </EmojiDiv>
       </EmojiPickerWrapper>
@@ -81,7 +81,12 @@ const AvatarAndEmoji: FC<AvatarAndEmojiProps> = ({
   if (isHaveAvatar) {
     return (
       <AvatarDiv>
-        <Avatar draggable={false} src={avatar} alt={"None"} size={SIZE} />
+        <Avatar
+          draggable={false}
+          src={avatar}
+          alt={"None"}
+          size={AVATAR_SIZE}
+        />
         {!avatarOnly && (
           <EmojiPickerWrapper
             onSelect={handleEmojiChange}
@@ -92,7 +97,7 @@ const AvatarAndEmoji: FC<AvatarAndEmojiProps> = ({
               <Emoji
                 unified={emojiText}
                 emojiStyle={EmojiStyle.FACEBOOK}
-                size={SIZE / 2}
+                size={AVATAR_SIZE / 2.2}
               />
             </AbsoluteEmojiDiv>
           </EmojiPickerWrapper>

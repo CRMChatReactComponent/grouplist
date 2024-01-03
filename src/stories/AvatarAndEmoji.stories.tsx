@@ -19,7 +19,7 @@ const meta = {
     }
 
     return (
-      <div style={{ padding: 42 }}>1
+      <div style={{ padding: 42 }}>
         <AvatarAndEmoji
           {...omit(props, ["onEmojiChange", "emoji"])}
           emoji={emoji}

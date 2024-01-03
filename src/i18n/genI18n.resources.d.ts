@@ -9,6 +9,9 @@ export interface I18nResourceInterface {
     deleteCurrentColor: "删除当前颜色";
     changeBackgroundColor: "修改背景色";
     presets: "预设";
+    deepColor: "深色";
+    mildColor: "柔和";
+    lightColor: "浅色";
     delete: "删除";
     deleteSuccessfully: "删除成功!";
     dangerOperation: "危险操作";
