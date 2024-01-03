@@ -4,9 +4,8 @@ import {
   StaticTreeDataProvider,
   Tree,
 } from "react-complex-tree";
-import { Button, DropdownProps } from "antd";
+import { DropdownProps } from "antd";
 import GroupItem from "@/components/GroupItem";
-import { DISABLED_ITEM_INTERACTION_CLASS } from "@/components/GroupItem/const";
 import { GroupItemType } from "@/components/GroupItem/type";
 import { isElDisableInteraction } from "@/components/GroupList/helpers/disableInteractionHelper";
 import {
