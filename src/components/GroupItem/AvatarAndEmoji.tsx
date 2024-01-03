@@ -1,5 +1,4 @@
 import { FC, useMemo } from "react";
-import { Avatar } from "antd";
 import EmojiPickerWrapper from "@/components/EmojiPickerWrapper";
 import { US } from "@/types";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
@@ -81,12 +80,7 @@ const AvatarAndEmoji: FC<AvatarAndEmojiProps> = ({
   if (isHaveAvatar) {
     return (
       <AvatarDiv>
-        <Avatar
-          draggable={false}
-          src={avatar}
-          alt={"None"}
-          size={AVATAR_SIZE}
-        />
+        <img src={avatar} width={AVATAR_SIZE} height={AVATAR_SIZE} />
         {!avatarOnly && (
           <EmojiPickerWrapper
             onSelect={handleEmojiChange}

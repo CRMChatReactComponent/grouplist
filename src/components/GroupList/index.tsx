@@ -3,6 +3,7 @@ import {
   UncontrolledTreeEnvironment,
   StaticTreeDataProvider,
   Tree,
+  InteractionMode,
 } from "react-complex-tree";
 import { DropdownProps } from "antd";
 import GroupItem from "@/components/GroupItem";
@@ -53,6 +54,7 @@ const GroupList: FC<GroupListPropsType> = (props: GroupListPropsType) => {
         viewState={{}}
         defaultInteractionMode={{
           mode: "custom",
+          extends: InteractionMode.ClickItemToExpand,
           createInteractiveElementProps: (
             item,
             treeId,
@@ -63,12 +65,19 @@ const GroupList: FC<GroupListPropsType> = (props: GroupListPropsType) => {
               const target = ev.target as HTMLDivElement;
               if (isElDisableInteraction(target)) return;
 
-              actions.focusItem();
               if (item.isFolder) {
                 renderFlags.isExpanded
                   ? actions.collapseItem()
                   : actions.expandItem();
+              } else {
+                actions.focusItem();
               }
+            },
+            onFocus: () => {
+              if (item.isFolder) {
+                return;
+              }
+              actions.focusItem();
             },
           }),
         }}

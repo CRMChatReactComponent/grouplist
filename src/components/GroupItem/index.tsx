@@ -1,8 +1,9 @@
 import { FC, ReactNode, useMemo } from "react";
-import { Button, Dropdown, DropdownProps, Flex, Typography } from "antd";
+import { Dropdown, DropdownProps } from "antd";
 import AvatarAndEmoji, {
   AVATAR_SIZE,
 } from "@/components/GroupItem/AvatarAndEmoji";
+import Indicator from "@/components/GroupItem/Indicator";
 import { DISABLED_ITEM_INTERACTION_CLASS } from "@/components/GroupItem/const";
 import { useActionDropdownProps } from "@/components/GroupItem/hooks/useActionDropdownProps";
 import { useGroupItemBackgroundColor } from "@/components/GroupItem/hooks/useGroupItemBackgroundColor";
@@ -10,7 +11,6 @@ import { GroupItemTypeEnum } from "@/enums";
 import { useIsDark } from "@/hooks/useIsDark";
 import { CancelableReturnType } from "@/types";
 import {
-  FolderExpandedArrow,
   TopRightCornerBoxVertButton,
   Wrapper,
   CenterBox,
@@ -18,11 +18,12 @@ import {
   CenterTopBox,
   CenterBottomBox,
   MessageSpan,
+  TopRightCornerBox,
+  Container,
+  SlotExtraInformationWrapper,
 } from "./index.styled";
 import { GroupItemType } from "./type";
 import { MoreOutlined } from "@ant-design/icons";
-
-const { Text } = Typography;
 
 export type GroupItemPropsType = {
   data: GroupItemType;
@@ -85,61 +86,72 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
   }
 
   return (
-    <Wrapper
-      $bg={bg}
-      $bgHover={hoverBg}
-      $isHaveMiddleInformation={isHaveMiddleInformation}
-      $isDark={isDark}
-    >
-      <div
-        style={{ marginRight: 18 }}
-        className={DISABLED_ITEM_INTERACTION_CLASS}
+    <Container $isDark={isDark}>
+      <Indicator
+        isExpanded={isExpanded}
+        isFocused={isFocused}
+        type={data.type}
+      />
+      <Wrapper
+        $bg={bg}
+        $bgHover={hoverBg}
+        $isHaveMiddleInformation={isHaveMiddleInformation}
+        $isDarkBg={isDarkBgColor}
       >
-        <AvatarAndEmoji
-          avatar={avatar}
-          emoji={emoji}
-          defaultEmoji={defaultEmoji}
-          allowDelete={true}
-          disabled={readonly}
-          onEmojiChange={(emoji) => handleDataValueChange("emoji", emoji)}
-        />
-      </div>
+        <div
+          style={{ marginRight: 18 }}
+          className={DISABLED_ITEM_INTERACTION_CLASS}
+        >
+          <AvatarAndEmoji
+            avatar={avatar}
+            emoji={emoji}
+            defaultEmoji={defaultEmoji}
+            allowDelete={true}
+            disabled={readonly}
+            onEmojiChange={(emoji) => handleDataValueChange("emoji", emoji)}
+          />
+        </div>
 
-      {/*中间区域(包含右上角的 vert*/}
-      <CenterBox $space={AVATAR_SIZE + 18}>
-        <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
-          <TitleSpan>{title}</TitleSpan>
+        {/*中间区域(包含右上角的 vert*/}
+        <CenterBox $space={AVATAR_SIZE + 18}>
+          <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
+            <TitleSpan>{title}</TitleSpan>
 
-          {/*右上角功能区域*/}
-          <div>
-            {SlotTopRightArea && SlotTopRightArea}
+            {/*右上角功能区域*/}
+            <TopRightCornerBox>
+              {SlotTopRightArea && SlotTopRightArea}
 
-            <TopRightCornerBoxVertButton>
-              <Dropdown {...actionDropdownProps}>
-                <Button size={"small"} type={"text"} icon={<MoreOutlined />} />
-              </Dropdown>
-            </TopRightCornerBoxVertButton>
+              <TopRightCornerBoxVertButton
+                className={DISABLED_ITEM_INTERACTION_CLASS}
+              >
+                <Dropdown {...actionDropdownProps}>
+                  <button>
+                    <MoreOutlined style={{ fontSize: 16 }} />
+                  </button>
+                </Dropdown>
+              </TopRightCornerBoxVertButton>
+            </TopRightCornerBox>
+          </CenterTopBox>
 
-            {data.type === GroupItemTypeEnum.GROUP && (
-              <FolderExpandedArrow $isExpanded={isExpanded} />
-            )}
-          </div>
-        </CenterTopBox>
+          {/*额外信息注入*/}
+          {SlotExtraInformation && (
+            <SlotExtraInformationWrapper>
+              {SlotExtraInformation}
+            </SlotExtraInformationWrapper>
+          )}
 
-        {/*额外信息注入*/}
-        {SlotExtraInformation && SlotExtraInformation}
+          {/*消息*/}
+          <CenterBottomBox>
+            <MessageSpan>{message}</MessageSpan>
 
-        {/*消息*/}
-        <CenterBottomBox>
-          <MessageSpan>{message}</MessageSpan>
-
-          {/*右下角插槽*/}
-          <div className={DISABLED_ITEM_INTERACTION_CLASS}>
-            {SlotBottomRightArea && SlotBottomRightArea}
-          </div>
-        </CenterBottomBox>
-      </CenterBox>
-    </Wrapper>
+            {/*右下角插槽*/}
+            <div className={DISABLED_ITEM_INTERACTION_CLASS}>
+              {SlotBottomRightArea && SlotBottomRightArea}
+            </div>
+          </CenterBottomBox>
+        </CenterBox>
+      </Wrapper>
+    </Container>
   );
 };
 
