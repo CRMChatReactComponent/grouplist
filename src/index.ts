@@ -6,6 +6,7 @@ export * from "./plugins/useSelectsPlugin";
 export * from "./plugins/GroupListPlugin";
 export * from "./context/AntdApiContext";
 export * from "./context/I18nContext";
+export * from "./enums/index";
 export type * from "./components/GroupList/types";
 export type * from "./components/GroupItem/index";
 export type { PluginType } from "./types/index";
