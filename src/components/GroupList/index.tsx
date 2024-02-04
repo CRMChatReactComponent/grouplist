@@ -92,14 +92,10 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
     const isDark = useIsDark();
 
     //  暴露方法
-    useImperativeHandle(
-      ref,
-      () => ({
-        getEnvironment: () => environment.current,
-        getTree: () => tree.current,
-      }),
-      [tree.current, environment.current],
-    );
+    useImperativeHandle(ref, () => ({
+      getEnvironment: () => environment.current,
+      getTree: () => tree.current,
+    }));
 
     function handleItemDataChange(item: GroupItemType) {
       data[item.id].data = item;
