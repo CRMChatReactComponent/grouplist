@@ -31,7 +31,6 @@ export function genMockTreeData() {
 
   genItem(tree, "root", 1);
 
-
   return tree;
 }
 

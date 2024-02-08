@@ -16,7 +16,7 @@ type AvatarAndEmojiProps = {
   onEmojiChange?: (source: SourceType) => void;
 };
 
-export const AVATAR_SIZE = 32;
+export const AVATAR_SIZE = 38;
 
 const EmojiDiv = styled.div<{ $disabled: boolean }>`
   width: ${AVATAR_SIZE}px;
@@ -30,6 +30,10 @@ const AvatarDiv = styled.div`
   position: relative;
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
+
+  img {
+    border-radius: 50%;
+  }
 `;
 
 const AbsoluteEmojiDiv = styled.div<{ $disabled: boolean }>`

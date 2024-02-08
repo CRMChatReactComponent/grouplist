@@ -22,6 +22,7 @@ import {
   Container,
   SlotExtraInformationWrapper,
   SlotBottomRightAreaContainer,
+  AvatarWrapper,
 } from "./index.styled";
 import { DefaultSlotType, GroupItemType } from "./type";
 import { MoreOutlined } from "@ant-design/icons";
@@ -37,6 +38,7 @@ export type GroupItemPropsType = {
   onDeleted?: (data: GroupItemType) => void;
   onDataChange?: (data: GroupItemType) => void;
   SlotExtraInformation?: DefaultSlotType;
+  SlotAvatarExtra?: DefaultSlotType;
   SlotTopRightAreaLeft?: DefaultSlotType;
   SlotTopRightAreaRight?: DefaultSlotType;
   SlotBottomRightArea?: DefaultSlotType;
@@ -56,6 +58,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     SlotTopRightAreaLeft,
     SlotTopRightAreaRight,
     SlotBottomRightArea,
+    SlotAvatarExtra,
   }: GroupItemPropsType = props;
   const { title, message, backgroundColor, emoji, avatar, readonly } = data;
 
@@ -109,19 +112,25 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
         $isHaveMiddleInformation={isHaveMiddleInformation}
         $isDarkBg={isDarkBgColor}
       >
-        <div
-          style={{ marginRight: 18 }}
-          className={DISABLED_ITEM_INTERACTION_CLASS}
-        >
+        <AvatarWrapper className={DISABLED_ITEM_INTERACTION_CLASS}>
           <AvatarAndEmoji
             avatar={avatar}
             emoji={emoji}
             defaultEmoji={defaultEmoji}
             allowDelete={true}
             disabled={readonly}
+            avatarOnly={true}
             onEmojiChange={(emoji) => handleDataValueChange("emoji", emoji)}
           />
-        </div>
+          {SlotAvatarExtra && (
+            <SlotAvatarExtra
+              isFocused={isFocused}
+              isExpanded={isExpanded}
+              isSelected={isSelected}
+              data={data}
+            />
+          )}
+        </AvatarWrapper>
 
         {/*中间区域(包含右上角的 vert*/}
         <CenterBox $space={AVATAR_SIZE + 18}>

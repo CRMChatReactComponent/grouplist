@@ -7,8 +7,7 @@ export const Wrapper = styled.section`
 `;
 
 export const GroupListWrapper = styled.div<{ $isDark: boolean }>`
-  padding-left: 4px;
-  padding-right: 20px;
+  padding-left: 12px;
   height: 100%;
   overflow: auto;
   overflow-x: hidden;

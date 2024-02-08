@@ -39,7 +39,7 @@ export const FolderExpandedArrow = styled.span<{ $isExpanded: boolean }>`
 
 const IndicatorWrapper = styled.div`
   width: 14px;
-  height: 42px;
+  height: 48px;
   flex-shrink: 0;
   position: relative;
 
@@ -57,13 +57,22 @@ const SelectedDiv = styled.div`
   background-color: #1877ff;
 `;
 
+const FocusedDiv = styled.div`
+  position: absolute;
+  right: 2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #1877ff;
+`;
+
 const Indicator: FC<Props> = ({ isExpanded, isFocused, isSelected, type }) => {
   return (
     <IndicatorWrapper>
       {type === GroupItemTypeEnum.GROUP ? (
         <FolderExpandedArrow $isExpanded={isExpanded} />
       ) : isFocused ? (
-        <Badge status={"processing"} />
+        <FocusedDiv />
       ) : null}
 
       {isSelected && <SelectedDiv />}

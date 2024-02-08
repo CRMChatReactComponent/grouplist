@@ -9,6 +9,7 @@ import {
   memo,
   useEffect,
   useLayoutEffect,
+  useCallback,
 } from "react";
 import {
   UncontrolledTreeEnvironment,
@@ -61,6 +62,7 @@ export type GroupListPropsType = {
   | "SlotExtraInformation"
   | "SlotTopRightAreaLeft"
   | "SlotTopRightAreaRight"
+  | "SlotAvatarExtra"
 >;
 
 export type GroupListHandler = {
@@ -104,16 +106,6 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       update(Math.random());
     }
 
-    function handleOnDrop() {
-      //  @ts-ignore
-      const items = environment.current?.dataProvider?.data?.items;
-      if (items) {
-        onDataChange({
-          ...items,
-        });
-      }
-    }
-
     function handleOnDelete(data: GroupItemType) {
       //  @ts-ignore
       const items = environment.current?.dataProvider?.data?.items ?? {};
@@ -128,9 +120,107 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       );
     }
 
-    function handleFocus(item) {
+    const defaultInteractionMode = useMemo(() => {
+      return {
+        mode: "custom",
+        extends: InteractionMode.ClickItemToExpand,
+        createInteractiveElementProps: (
+          item,
+          treeId,
+          actions,
+          renderFlags,
+        ) => ({
+          onClick: (ev) => {
+            const target = ev.target as HTMLDivElement;
+            if (isElDisableInteraction(target)) return;
+
+            actions.focusItem();
+
+            if (ev.shiftKey) {
+              actions.selectUpTo(!ev.ctrlKey);
+            } else if (isControlKey(ev)) {
+              if (renderFlags.isSelected) {
+                actions.unselectItem();
+              } else {
+                actions.addToSelectedItems();
+              }
+            } else {
+              if (item.isFolder) {
+                actions.toggleExpandedState();
+              }
+              actions.selectItem();
+
+              if (!item.isFolder) {
+                actions.primaryAction();
+              }
+            }
+          },
+          onFocus: (ev) => {
+            const target = ev.target as HTMLDivElement;
+            if (isElDisableInteraction(target)) return;
+            if (item.isFolder) return;
+            actions.focusItem();
+          },
+        }),
+      };
+    }, []);
+
+    const canDropAt = useCallback((items, target) => {
+      const isHaveFolderInItems = !!items.find((item) => item.isFolder);
+
+      //  禁止拖拽后形成跟深的 folder
+      if (isHaveFolderInItems) {
+        //  禁止将一个 item 拖拽到 deepestFolderLevel - 1 的 folder 中
+        if (target.targetType === "item") {
+          if (target.depth + 2 > deepestFolderLevel) {
+            return false;
+          }
+        }
+
+        if (target.targetType === "between-items") {
+          if (target.depth + 1 > deepestFolderLevel) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }, []);
+
+    const viewState = useMemo(() => ({}), []);
+
+    const getItemTitle = useCallback(
+      (item: GroupListDataItemType) => item.data.title,
+      [],
+    );
+
+    const renderTreeContainer = useCallback(
+      ({ children, containerProps }) => (
+        <div {...containerProps}>{children}</div>
+      ),
+      [],
+    );
+
+    const renderItemsContainer = useCallback(
+      ({ children, containerProps }) => (
+        <div {...containerProps}>{children}</div>
+      ),
+      [],
+    );
+
+    const handleOnDrop = useCallback(() => {
+      //  @ts-ignore
+      const items = environment.current?.dataProvider?.data?.items;
+      if (items) {
+        onDataChange({
+          ...items,
+        });
+      }
+    }, []);
+
+    const handleFocus = useCallback((item) => {
       onItemFocused(item.data);
-    }
+    }, []);
 
     return (
       <Wrapper>
@@ -142,78 +232,13 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
             canDropOnFolder={true}
             canReorderItems={true}
             canDropOnNonFolder={false}
-            canDropAt={(items, target) => {
-              const isHaveFolderInItems = !!items.find((item) => item.isFolder);
-
-              //  禁止拖拽后形成跟深的 folder
-              if (isHaveFolderInItems) {
-                //  禁止将一个 item 拖拽到 deepestFolderLevel - 1 的 folder 中
-                if (target.targetType === "item") {
-                  if (target.depth + 2 > deepestFolderLevel) {
-                    return false;
-                  }
-                }
-
-                if (target.targetType === "between-items") {
-                  if (target.depth + 1 > deepestFolderLevel) {
-                    return false;
-                  }
-                }
-              }
-
-              return true;
-            }}
+            canDropAt={canDropAt}
             dataProvider={dataProvider}
-            viewState={{}}
-            defaultInteractionMode={{
-              mode: "custom",
-              extends: InteractionMode.ClickItemToExpand,
-              createInteractiveElementProps: (
-                item,
-                treeId,
-                actions,
-                renderFlags,
-              ) => ({
-                onClick: (ev) => {
-                  const target = ev.target as HTMLDivElement;
-                  if (isElDisableInteraction(target)) return;
-
-                  actions.focusItem();
-
-                  if (ev.shiftKey) {
-                    actions.selectUpTo(!ev.ctrlKey);
-                  } else if (isControlKey(ev)) {
-                    if (renderFlags.isSelected) {
-                      actions.unselectItem();
-                    } else {
-                      actions.addToSelectedItems();
-                    }
-                  } else {
-                    if (item.isFolder) {
-                      actions.toggleExpandedState();
-                    }
-                    actions.selectItem();
-
-                    if (!item.isFolder) {
-                      actions.primaryAction();
-                    }
-                  }
-                },
-                onFocus: (ev) => {
-                  const target = ev.target as HTMLDivElement;
-                  if (isElDisableInteraction(target)) return;
-                  if (item.isFolder) return;
-                  actions.focusItem();
-                },
-              }),
-            }}
-            getItemTitle={(item: GroupListDataItemType) => item.data.title}
-            renderTreeContainer={({ children, containerProps }) => (
-              <div {...containerProps}>{children}</div>
-            )}
-            renderItemsContainer={({ children, containerProps }) => (
-              <div {...containerProps}>{children}</div>
-            )}
+            viewState={viewState}
+            defaultInteractionMode={defaultInteractionMode}
+            getItemTitle={getItemTitle}
+            renderTreeContainer={renderTreeContainer}
+            renderItemsContainer={renderItemsContainer}
             renderItem={(_props) => {
               const { context, children, item } = _props;
               const itemData = item.data as GroupItemType;
@@ -240,12 +265,13 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                       SlotTopRightAreaLeft={props.SlotTopRightAreaLeft}
                       SlotTopRightAreaRight={props.SlotTopRightAreaRight}
                       SlotBottomRightArea={props.SlotBottomRightArea}
+                      SlotAvatarExtra={props.SlotAvatarExtra}
                     />
                   </ItemWrap>
 
                   <div
                     style={{
-                      paddingLeft: 24,
+                      paddingLeft: 12,
                     }}
                   >
                     {children}

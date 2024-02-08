@@ -161,3 +161,8 @@ export const Container = styled.div<{ $isDark: boolean }>`
     color: ${(p) => (p.$isDark ? secondaryColor[0] : secondaryColor[1])};
   }
 `;
+
+export const AvatarWrapper = styled.div`
+  margin-right: 18px;
+  position: relative;
+`;

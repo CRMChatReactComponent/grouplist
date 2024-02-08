@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 const NewMessageBox = styled.div<{ $size: Props["size"] }>`
   position: absolute;
-  right: 0px;
-  top: -10px;
+  right: 16px;
+  top: -6px;
   font-size: 12px;
   background: #f20;
   color: #fff;
@@ -19,17 +19,12 @@ const NewMessageBox = styled.div<{ $size: Props["size"] }>`
 
 const DotDiv = styled.div`
   position: absolute;
-  top: -7px;
-  right: -6px;
+  top: 0;
+  right: 0;
   border-radius: 50%;
-  transform: translateX(100%);
   width: 6px;
   height: 6px;
   background: #f20;
-`;
-
-const Wrapper = styled.div`
-  position: relative;
 `;
 
 type Props = {
@@ -52,6 +47,10 @@ export function useNewMessagesPlugin(props: Props) {
 
   function getMessageCount(id: GroupItemType["id"]): string {
     const count = state.map[id] ?? 0;
+    return getCountStr(count);
+  }
+
+  function getCountStr(count: number) {
     return count > 99 ? "99+" : String(Math.ceil(count));
   }
 
@@ -73,28 +72,38 @@ export function useNewMessagesPlugin(props: Props) {
           _onItemFocused?.(data);
         };
 
-        const PrevSlot = props.SlotTopRightAreaRight;
-        props.SlotTopRightAreaRight = function NewMessageSlot(_props) {
-          if (
-            _props.data.type === GroupItemTypeEnum.GROUP ||
-            getMessageCount(_props.data.id) === "0"
-          ) {
+        const PrevSlot = props.SlotAvatarExtra;
+        props.SlotAvatarExtra = function NewMessageSlot(_props) {
+          let countStr = getMessageCount(_props.data.id);
+
+          //  如果是小组的话，需要统计所有子节点的 count
+          //  只统计一级
+          if (_props.data.type === GroupItemTypeEnum.GROUP) {
+            const children = props.data[_props.data.id].children ?? [];
+            const totalCount = children.reduce<number>((prev, current) => {
+              prev += state.map[current] ?? 0;
+              return prev;
+            }, 0);
+            countStr = getCountStr(totalCount);
+          }
+
+          if (countStr === "0") {
             return PrevSlot ? <PrevSlot {..._props} /> : null;
           }
 
           return (
-            <Wrapper>
+            <>
               {dot ? (
                 <DotDiv />
-              ) : getMessageCount(_props.data.id) !== "0" ? (
+              ) : countStr !== "0" ? (
                 <NewMessageBox $size={size}>
-                  <bdi>{getMessageCount(_props.data.id)}</bdi>
+                  <bdi>{countStr}</bdi>
                 </NewMessageBox>
               ) : (
                 <></>
               )}
               {PrevSlot && <PrevSlot {..._props} />}
-            </Wrapper>
+            </>
           );
         };
         return props;

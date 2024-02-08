@@ -1,12 +1,16 @@
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { Button, ColorPicker, Select, Space, Switch, Typography } from "antd";
-import { omit } from "lodash-es";
+import { omit, sample } from "lodash-es";
 import { GroupItemType } from "../components/GroupItem/type";
 import GroupList from "../components/GroupList/index";
 import { GroupItemTypeEnum } from "../enums/index";
 import { GroupListPlugin } from "../plugins/GroupListPlugin";
 import { useNewMessagesPlugin } from "../plugins/useNewMessagesPlugin";
 import { useSelectsPlugin } from "../plugins/useSelectsPlugin";
+import {
+  UserOnlineStatusEnum,
+  useUserStatusPlugin,
+} from "../plugins/useUserStatusPlugin";
 import { genMockTreeData } from "./helpers/genMockTreeDataHelper";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -24,7 +28,7 @@ const meta = {
       props?.onDataChange?.(data);
     }
     return (
-      <div style={{ width: 420 }}>
+      <div style={{ width: 420, border: "1px solid #f20" }}>
         <GroupList
           {...omit(props, ["data", "onDataChange"])}
           data={data}
@@ -171,6 +175,59 @@ export const PluginNewMessage: Story = {
     }
 
     return (
+      <div style={{ width: 420, border: "1px solid #f20" }}>
+        <GroupList
+          {...omit(props, ["data", "onDataChange", "plugin"])}
+          data={data}
+          onDataChange={handleDataChange}
+          plugin={plugin}
+        />
+      </div>
+    );
+  },
+};
+
+export const PluginUserStatus: Story = {
+  args: {
+    data: mockTreeData,
+  },
+  render(props, context) {
+    const [data, setData] = useState(props.data ?? {});
+    const [userStatusIdsMap, setUserStatusIdsMap] = useState<
+      Record<GroupItemType["id"], UserOnlineStatusEnum | undefined>
+    >(
+      Object.keys(mockTreeData).reduce((prev, current) => {
+        prev[current] = sample([
+          UserOnlineStatusEnum.INVISIBLE,
+          UserOnlineStatusEnum.ACTIVE,
+          UserOnlineStatusEnum.AWAY,
+          UserOnlineStatusEnum.DO_NOT_DISTURB,
+          undefined,
+        ]);
+        return prev;
+      }, {}),
+    );
+    const [currentSelectId, setCurrentSelectId] = useState("root");
+
+    const { plugin: newUserStatusPlugin } = useUserStatusPlugin({
+      state: {
+        map: userStatusIdsMap,
+        setMap: setUserStatusIdsMap,
+      },
+    });
+
+    const plugin = useMemo(() => {
+      const plugin = new GroupListPlugin();
+      plugin.register(newUserStatusPlugin);
+      return plugin;
+    }, [newUserStatusPlugin]);
+
+    function handleDataChange(data) {
+      setData(data);
+      props?.onDataChange?.(data);
+    }
+
+    return (
       <div style={{ width: 420 }}>
         <GroupList
           {...omit(props, ["data", "onDataChange", "plugin"])}
@@ -201,9 +258,9 @@ export const CustomDropdown: Story = {
                     key: "alertGroupName",
                   },
                 ],
-                onClick(ev){
-                  alert(ev.key)
-                }
+                onClick(ev) {
+                  alert(ev.key);
+                },
               };
             } else {
               return {
@@ -213,9 +270,9 @@ export const CustomDropdown: Story = {
                     key: "alertUserName",
                   },
                 ],
-                onClick(ev){
-                  alert(ev.key)
-                }
+                onClick(ev) {
+                  alert(ev.key);
+                },
               };
             }
           }}

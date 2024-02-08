@@ -7,6 +7,6 @@ addons.setConfig({
   theme: create({
     base: "dark",
     brandTitle: "GroupList 组件",
-    brandUrl: 'https://github.com/CRMChatReactComponent',
+    brandUrl: "https://github.com/CRMChatReactComponent",
   }),
 });
