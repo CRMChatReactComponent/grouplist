@@ -109,7 +109,7 @@ export const Wrapper = styled.section<{
     sans-serif;
   padding: 4px 8px;
   background-color: ${(p) => p.$bg};
-  width: 100%;
+  width: calc(100% - 14px);
   cursor: pointer;
   height: ${(p) => (p.$isHaveMiddleInformation ? 60 : 48)}px;
   line-height: 1em;
