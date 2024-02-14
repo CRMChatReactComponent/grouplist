@@ -16,7 +16,7 @@ export const FolderExpandedArrow = styled.span<{ $isExpanded: boolean }>`
   display: block;
   width: 12px;
   left: -10px;
-  top: 22px;
+  top: 36px;
   opacity: 0.65;
   cursor: pointer;
   transform: translateY(${({ $isExpanded }) => ($isExpanded ? -5 : 0)}px);
