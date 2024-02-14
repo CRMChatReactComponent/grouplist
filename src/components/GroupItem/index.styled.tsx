@@ -123,8 +123,13 @@ export const Wrapper = styled.section<{
     background: ${(p) => p.$bgHover};
   }
 
-  &:hover ${TopRightCornerBoxVertButton} {
-    opacity: 1;
+  .hover-shows {
+    opacity: 0;
+  }
+  &:hover {
+    ${TopRightCornerBoxVertButton}, .hover-shows {
+      opacity: 1;
+    }
   }
 
   ${TitleSpan} {
@@ -136,6 +141,8 @@ export const Wrapper = styled.section<{
   ${SlotExtraInformationWrapper} {
     color: ${(p) => (p.$isDarkBg ? secondaryColor[0] : secondaryColor[1])};
   }
+
+  .hover-shows button,
   ${TopRightCornerBoxVertButton} button {
     color: ${(p) => (p.$isDarkBg ? secondaryColor[0] : secondaryColor[1])};
 

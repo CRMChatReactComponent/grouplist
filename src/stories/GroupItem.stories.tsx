@@ -54,7 +54,11 @@ export const Group: Story = {
       },
     },
     SlotExtraInformation: () => <span style={{ fontSize: 12 }}>成员: 24</span>,
-    SlotTopRightAreaLeft: () => <Checkbox />,
+    SlotTopRightAreaLeft: () => (
+      <div className={"hover-shows"}>
+        <Checkbox />
+      </div>
+    ),
     SlotBottomRightArea: () => <Checkbox />,
   },
 };
