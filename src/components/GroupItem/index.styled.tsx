@@ -142,7 +142,6 @@ export const Wrapper = styled.section<{
     color: ${(p) => (p.$isDarkBg ? secondaryColor[0] : secondaryColor[1])};
   }
 
-  .hover-shows button,
   ${TopRightCornerBoxVertButton} button {
     color: ${(p) => (p.$isDarkBg ? secondaryColor[0] : secondaryColor[1])};
 
