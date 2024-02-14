@@ -208,7 +208,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       [],
     );
 
-    const handleOnDrop = useCallback(() => {
+    const handleOnDrop = () => {
       //  @ts-ignore
       const items = environment.current?.dataProvider?.data?.items;
       if (items) {
@@ -216,7 +216,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
           ...items,
         });
       }
-    }, []);
+    };
 
     const handleFocus = useCallback((item) => {
       onItemFocused(item.data);

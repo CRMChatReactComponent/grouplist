@@ -16,7 +16,7 @@ export const SlotBottomRightAreaContainer = styled.div`
 `;
 
 export const MessageSpan = styled.span`
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
   flex: 1 1 auto;
   word-wrap: break-word;
@@ -55,7 +55,7 @@ export const TitleSpan = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: 15px;
 `;
 
 export const CenterTopBox = styled.div<{ $marginTop: number }>`
@@ -67,10 +67,11 @@ export const CenterTopBox = styled.div<{ $marginTop: number }>`
   margin-top: ${(p) => p.$marginTop}px;
 `;
 
-export const CenterBox = styled.div<{ $space: number }>`
+export const CenterBox = styled.div<{ $space: number; $gap: number }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  gap: ${(p) => p.$gap}px;
   height: 100%;
   width: calc(100% - ${(p) => p.$space}px);
 `;
@@ -111,12 +112,13 @@ export const Wrapper = styled.section<{
   background-color: ${(p) => p.$bg};
   width: calc(100% - 14px);
   cursor: pointer;
-  height: ${(p) => (p.$isHaveMiddleInformation ? 60 : 48)}px;
+  height: 72px;
   line-height: 1em;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  border-radius: 4px;
   &:hover {
     background: ${(p) => p.$bgHover};
   }

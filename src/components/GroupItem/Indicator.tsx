@@ -39,7 +39,7 @@ export const FolderExpandedArrow = styled.span<{ $isExpanded: boolean }>`
 
 const IndicatorWrapper = styled.div`
   width: 14px;
-  height: 48px;
+  height: 72px;
   flex-shrink: 0;
   position: relative;
 

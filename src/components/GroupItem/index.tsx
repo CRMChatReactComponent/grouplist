@@ -133,7 +133,10 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
         </AvatarWrapper>
 
         {/*中间区域(包含右上角的 vert*/}
-        <CenterBox $space={AVATAR_SIZE + 18}>
+        <CenterBox
+          $space={AVATAR_SIZE + 18}
+          $gap={isHaveMiddleInformation ? 4 : 8}
+        >
           <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
             <TitleSpan>{title}</TitleSpan>
 
