@@ -327,7 +327,7 @@ export function useDataModifyAPI(
   };
 
   const deleteItems: UseDataModifyAPIReturnType["deleteItems"] = (ids) => {
-    const deletedIds = ids.map((id) => _deleteFolder[id]).flat();
+    const deletedIds = ids.map((id) => _deleteFolder(id)).flat();
     _cleanUpItems(deletedIds);
     onDataChange({ ...data });
   };
