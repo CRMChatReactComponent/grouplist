@@ -9,6 +9,7 @@ export * from "./context/AntdApiContext";
 export * from "./context/I18nContext";
 export * from "./enums/index";
 export type * from "./components/GroupList/types";
+export type { UseDataModifyAPIReturnType } from "./components/GroupList/hooks/useDataModifyAPI";
 export type * from "./components/GroupItem/index";
 export type * from "./components/GroupItem/type";
 export type { PluginType } from "./types/index";

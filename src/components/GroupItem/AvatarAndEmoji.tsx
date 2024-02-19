@@ -16,13 +16,14 @@ type AvatarAndEmojiProps = {
   onEmojiChange?: (source: SourceType) => void;
 };
 
-export const AVATAR_SIZE = 56;
+export const AVATAR_SIZE = 38;
 
 const EmojiDiv = styled.div<{ $disabled: boolean }>`
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
   font-size: ${AVATAR_SIZE}px;
   line-height: ${AVATAR_SIZE}px;
+  user-select: none;
   cursor: ${(p) => (p.$disabled ? "default" : "pointer")};
 `;
 
@@ -30,8 +31,10 @@ const AvatarDiv = styled.div`
   position: relative;
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
+  user-select: none;
 
   img {
+    -webkit-user-drag: none;
     border-radius: 50%;
   }
 `;

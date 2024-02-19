@@ -6,24 +6,24 @@ export const Wrapper = styled.section`
   flex-direction: column;
 `;
 
-export const GroupListWrapper = styled.div<{ $isDark: boolean }>`
+export const GroupListWrapper = styled.div<{
+  $isDark: boolean;
+  $height: number;
+}>`
   padding-right: 8px;
-  padding-left: 12px;
-  height: 100%;
-  overflow: auto;
-  overflow-x: hidden;
+  height: ${(p) => p.$height}px;
 
-  &::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     width: 6px;
   }
-  &::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: ${(p) => (p.$isDark ? "#555" : "#ccc")};
   }
-  &::-webkit-scrollbar-thumb:hover {
+  ::-webkit-scrollbar-thumb:hover {
     background-color: ${(p) => (p.$isDark ? "#888" : "#999")};
   }
-  &::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     background: transparent;
   }
 `;

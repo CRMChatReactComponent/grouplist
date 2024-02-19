@@ -298,13 +298,13 @@ export const Ref: Story = {
             <Space>
               <Button
                 size={"small"}
-                onClick={() => GroupListRef.current?.getTree()?.collapseAll()}
+                onClick={() => GroupListRef.current?.collapseAll()}
               >
                 收起全部
               </Button>
               <Button
                 size={"small"}
-                onClick={() => GroupListRef.current?.getTree()?.expandAll()}
+                onClick={() => GroupListRef.current?.expandAll()}
               >
                 展开全部
               </Button>
@@ -411,9 +411,10 @@ export const PluginSelectsMultiple: Story = {
     data: mockTreeData,
   },
   render(props, context) {
-    const [data, setData] = useState(props.data ?? {});
     const [ids, setIds] = useState<GroupItemType["id"][]>([]);
     const [ids2, setIds2] = useState<GroupItemType["id"][]>([]);
+    const [data, setData] = useState(props.data ?? {});
+    const [_, update] = useState(0);
 
     const { plugin: SelectPlugin } = useSelectsPlugin({
       uniqueId: "test",
@@ -441,6 +442,7 @@ export const PluginSelectsMultiple: Story = {
     function handleDataChange(data) {
       setData(data);
       props?.onDataChange?.(data);
+      update(Math.random());
     }
 
     return (

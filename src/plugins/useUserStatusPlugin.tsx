@@ -18,8 +18,8 @@ const statusColorMap: Record<UserOnlineStatusEnum, string> = {
 };
 
 const StatusDot = styled.div<{ $color: string }>`
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: ${(p) => p.$color};
   position: absolute;

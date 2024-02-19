@@ -4,3 +4,5 @@
  */
 export const DISABLED_ITEM_INTERACTION_CLASS =
   "DISABLED_ITEM_INTERACTION_CLASS";
+
+export const GroupItemHeight = 60;

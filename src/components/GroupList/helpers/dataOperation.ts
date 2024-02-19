@@ -1,4 +1,5 @@
 import { GroupItemType } from "@/components/GroupItem/type";
+import { useData } from "@/components/GroupList/hooks/useData";
 import { GroupListDataType } from "@/components/GroupList/types";
 
 /**
@@ -46,4 +47,38 @@ export function deleteNonExistingGroupItem(
   }
 
   return items;
+}
+
+/**
+ * 根据 groupItem ID 判断 depth
+ * @param id
+ * @param parentIdMap
+ */
+export function getDepthById(
+  id: GroupItemType["id"],
+  parentIdMap: ReturnType<typeof useData>["parentIdMap"],
+): number {
+  if (!parentIdMap[id]) return 0;
+  if (id === "root") return 0;
+  if (parentIdMap[id] === "root") return 0;
+
+  return 1 + getDepthById(parentIdMap[id], parentIdMap);
+}
+
+/**
+ * 判断一个 id 是否在某个文件夹下面（递归）
+ * @param childId
+ * @param parentId
+ * @param parentIdMap
+ */
+export function isInFolder(
+  childId: GroupItemType["id"],
+  parentId: GroupItemType["id"],
+  parentIdMap: ReturnType<typeof useData>["parentIdMap"],
+): boolean {
+  const childParentId = parentIdMap[childId];
+  if (!childParentId) return false;
+  if (childParentId === parentId) return true;
+
+  return isInFolder(childParentId, parentId, parentIdMap);
 }

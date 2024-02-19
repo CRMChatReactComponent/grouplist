@@ -1,4 +1,5 @@
 import { FolderExpandedArrow } from "@/components/GroupItem/Indicator";
+import { GroupItemHeight } from "@/components/GroupItem/const";
 import styled from "styled-components";
 
 //  dark 和 light 的颜色
@@ -26,6 +27,7 @@ export const MessageSpan = styled.span`
   text-overflow: ellipsis;
   padding-right: 12px;
   opacity: 0.6;
+  user-select: none;
 `;
 
 export const SlotExtraInformationWrapper = styled.div`
@@ -101,6 +103,7 @@ export const Wrapper = styled.section<{
   $bgHover: string;
   $isHaveMiddleInformation: boolean;
   $isDarkBg: boolean;
+  $isOnDropOver: boolean;
 }>`
   font-family:
     system-ui,
@@ -109,16 +112,16 @@ export const Wrapper = styled.section<{
     ".SFNSText-Regular",
     sans-serif;
   padding: 4px 8px;
-  background-color: ${(p) => p.$bg};
   width: calc(100% - 14px);
   cursor: pointer;
-  height: 72px;
+  height: ${GroupItemHeight}px;
   line-height: 1em;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   border-radius: 4px;
+  background-color: ${(p) => (p.$isOnDropOver ? p.$bgHover : p.$bg)};
   &:hover {
     background: ${(p) => p.$bgHover};
   }

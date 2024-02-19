@@ -32,6 +32,7 @@ export type GroupItemPropsType = {
   isExpanded?: boolean;
   isFocused?: boolean;
   isSelected?: boolean;
+  isOnDropOver?: boolean;
   //  右上角 vert 按钮点击后的下拉菜单
   actionDropdownMenu?: DropdownProps["menu"];
   onBeforeDelete?: (data: GroupItemType) => CancelableReturnType;
@@ -50,6 +51,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     isExpanded = false,
     isFocused = false,
     isSelected = false,
+    isOnDropOver = false,
     actionDropdownMenu,
     onDataChange,
     onDeleted,
@@ -60,7 +62,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     SlotBottomRightArea,
     SlotAvatarExtra,
   }: GroupItemPropsType = props;
-  const { title, message, backgroundColor, emoji, avatar, readonly } = data;
+  const { title, message, backgroundColor, emoji, avatar, readonly, id } = data;
 
   const actionDropdownProps = useActionDropdownProps({
     data,
@@ -110,6 +112,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
         $bg={bg}
         $bgHover={hoverBg}
         $isHaveMiddleInformation={isHaveMiddleInformation}
+        $isOnDropOver={isOnDropOver}
         $isDarkBg={isDarkBgColor}
       >
         <AvatarWrapper className={DISABLED_ITEM_INTERACTION_CLASS}>
@@ -135,7 +138,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
         {/*中间区域(包含右上角的 vert*/}
         <CenterBox
           $space={AVATAR_SIZE + 18}
-          $gap={isHaveMiddleInformation ? 4 : 8}
+          $gap={isHaveMiddleInformation ? 0 : 8}
         >
           <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
             <TitleSpan>{title}</TitleSpan>
@@ -185,7 +188,6 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
           {/*消息*/}
           <CenterBottomBox>
             <MessageSpan>{message}</MessageSpan>
-
             {/*右下角插槽*/}
             <div className={DISABLED_ITEM_INTERACTION_CLASS}>
               <SlotBottomRightAreaContainer>

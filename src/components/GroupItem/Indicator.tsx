@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Badge } from "antd";
+import { GroupItemHeight } from "@/components/GroupItem/const";
 import { GroupItemPropsType } from "@/components/GroupItem/index";
 import { GroupItemTypeEnum } from "@/enums";
 import styled from "styled-components";
@@ -15,8 +15,8 @@ export const FolderExpandedArrow = styled.span<{ $isExpanded: boolean }>`
   position: relative;
   display: block;
   width: 12px;
-  left: -10px;
-  top: 36px;
+  left: -5px;
+  top: 30px;
   opacity: 0.65;
   cursor: pointer;
   transform: translateY(${({ $isExpanded }) => ($isExpanded ? -5 : 0)}px);
@@ -39,7 +39,7 @@ export const FolderExpandedArrow = styled.span<{ $isExpanded: boolean }>`
 
 const IndicatorWrapper = styled.div`
   width: 14px;
-  height: 72px;
+  height: ${GroupItemHeight}px;
   flex-shrink: 0;
   position: relative;
 
