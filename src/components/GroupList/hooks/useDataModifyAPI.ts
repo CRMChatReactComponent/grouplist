@@ -48,6 +48,11 @@ export type UseDataModifyAPIReturnType = {
    */
   deleteItem(id: GroupItemType["id"]): void;
   /**
+   * 删除多个 items
+   * @param ids
+   */
+  deleteItems(ids: GroupItemType["id"][]): void;
+  /**
    * 将用户添加到文件夹
    * 如果用户已经在其他文件夹中将会移动到 groupID 指定的文件夹
    * 如果用户不存在，则会新建
@@ -321,35 +326,15 @@ export function useDataModifyAPI(
     );
   };
 
+  const deleteItems: UseDataModifyAPIReturnType["deleteItems"] = (ids) => {
+    const deletedIds = ids.map((id) => _deleteFolder[id]).flat();
+    _cleanUpItems(deletedIds);
+    onDataChange({ ...data });
+  };
+
   const deleteItem: UseDataModifyAPIReturnType["deleteItem"] = (id) => {
     const deletedIds = _deleteFolder(id);
-
-    //  从 children 中移除所有被删除的 ids
-    //  清除所有群组中包含这些 peersId 的 children
-    for (const key in data) {
-      const children = data[key].children;
-      if (data[key].isFolder && children) {
-        data[key].children = children.filter(
-          (id) => !deletedIds.includes(id as string),
-        );
-      }
-    }
-
-    //  移除 viewStates 上的数据
-    setViewStates(
-      produce((draft) => {
-        draft.expanded = draft.expanded.filter(
-          (id) => !deletedIds.includes(id),
-        );
-        draft.selected = draft.selected.filter(
-          (id) => !deletedIds.includes(id),
-        );
-        if (deletedIds.includes(draft.focused)) {
-          draft.focused = "";
-        }
-      }),
-    );
-
+    _cleanUpItems(deletedIds);
     onDataChange({ ...data });
   };
 
@@ -442,6 +427,35 @@ export function useDataModifyAPI(
     return deletedId;
   }
 
+  //  清理删除后的数据通过 ids
+  function _cleanUpItems(deletedIds: GroupItemType["id"][]) {
+    //  从 children 中移除所有被删除的 ids
+    //  清除所有群组中包含这些 peersId 的 children
+    for (const key in data) {
+      const children = data[key].children;
+      if (data[key].isFolder && children) {
+        data[key].children = children.filter(
+          (id) => !deletedIds.includes(id as string),
+        );
+      }
+    }
+
+    //  移除 viewStates 上的数据
+    setViewStates(
+      produce((draft) => {
+        draft.expanded = draft.expanded.filter(
+          (id) => !deletedIds.includes(id),
+        );
+        draft.selected = draft.selected.filter(
+          (id) => !deletedIds.includes(id),
+        );
+        if (deletedIds.includes(draft.focused)) {
+          draft.focused = "";
+        }
+      }),
+    );
+  }
+
   return {
     getAllItemsFromFolder,
     unFocusItem,
@@ -452,6 +466,7 @@ export function useDataModifyAPI(
     collapseAll,
     collapseFolder,
     deleteItem,
+    deleteItems,
     addItemsToFolder,
     addItemsToFolderByIds,
     removeItemsFromFolderByIds,
