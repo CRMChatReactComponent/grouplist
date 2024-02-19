@@ -195,62 +195,56 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       [parentIdMap],
     );
 
-    const RowRenderer = useCallback(
-      ({ index, style }) => {
-        const id = listItemsIds[index];
-        const itemData = data[id].data;
-        const isExpanded = viewStates.expanded.includes(id);
-        const isSelected = viewStates.selected.includes(id);
-        const isFocused = viewStates.focused === id;
+    const RowRenderer = ({ index, style }) => {
+      const id = listItemsIds[index];
+      const itemData = data[id].data;
+      const isExpanded = viewStates.expanded.includes(id);
+      const isSelected = viewStates.selected.includes(id);
+      const isFocused = viewStates.focused === id;
 
-        // 渲染每一行的逻辑
-        return (
-          <Draggable draggableId={id} index={index} key={id}>
-            {(
-              provided: DraggableProvided,
-              snapshot: DraggableStateSnapshot,
-            ) => {
-              const isOnDropOver =
-                data[id].isFolder && Boolean(snapshot.combineTargetFor);
-              return (
+      // 渲染每一行的逻辑
+      return (
+        <Draggable draggableId={id} index={index} key={id}>
+          {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
+            const isOnDropOver =
+              data[id].isFolder && Boolean(snapshot.combineTargetFor);
+            return (
+              <div
+                key={id}
+                style={style}
+                data-id={itemData.id}
+                onClick={handleGroupItemClick}
+              >
                 <div
-                  key={id}
-                  style={style}
-                  data-id={itemData.id}
-                  onClick={handleGroupItemClick}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
                 >
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <DepthWrapper id={id}>
-                      <GroupItem
-                        key={itemData.id}
-                        data={itemData}
-                        isSelected={isSelected}
-                        isExpanded={isExpanded}
-                        isFocused={isFocused}
-                        isOnDropOver={isOnDropOver}
-                        actionDropdownMenu={getDropdownMenu(itemData)}
-                        onDataChange={handleItemDataChange}
-                        onDeleted={handleOnDelete}
-                        SlotExtraInformation={props.SlotExtraInformation}
-                        SlotTopRightAreaLeft={props.SlotTopRightAreaLeft}
-                        SlotTopRightAreaRight={props.SlotTopRightAreaRight}
-                        SlotBottomRightArea={props.SlotBottomRightArea}
-                        SlotAvatarExtra={props.SlotAvatarExtra}
-                      />
-                    </DepthWrapper>
-                  </div>
+                  <DepthWrapper id={id}>
+                    <GroupItem
+                      key={itemData.id}
+                      data={itemData}
+                      isSelected={isSelected}
+                      isExpanded={isExpanded}
+                      isFocused={isFocused}
+                      isOnDropOver={isOnDropOver}
+                      actionDropdownMenu={getDropdownMenu(itemData)}
+                      onDataChange={handleItemDataChange}
+                      onDeleted={handleOnDelete}
+                      SlotExtraInformation={props.SlotExtraInformation}
+                      SlotTopRightAreaLeft={props.SlotTopRightAreaLeft}
+                      SlotTopRightAreaRight={props.SlotTopRightAreaRight}
+                      SlotBottomRightArea={props.SlotBottomRightArea}
+                      SlotAvatarExtra={props.SlotAvatarExtra}
+                    />
+                  </DepthWrapper>
                 </div>
-              );
-            }}
-          </Draggable>
-        );
-      },
-      [listItemsIds, viewStates, props],
-    );
+              </div>
+            );
+          }}
+        </Draggable>
+      );
+    };
 
     const RenderClone = useCallback(
       (
