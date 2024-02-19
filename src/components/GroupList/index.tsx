@@ -1,11 +1,4 @@
-import {
-  ReactNode,
-  useState,
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  MouseEventHandler,
-} from "react";
+import { ReactNode, useState, forwardRef, useImperativeHandle } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -121,21 +114,18 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
     //  暴露方法
     useImperativeHandle(ref, () => API);
 
-    const handleGroupItemClick = useCallback<MouseEventHandler<HTMLDivElement>>(
-      (ev) => {
-        if (isElDisableInteraction(ev.target as HTMLDivElement)) return;
-        const target = ev.currentTarget as HTMLDivElement;
-        const id = target.dataset.id as string;
+    const handleGroupItemClick = (ev) => {
+      if (isElDisableInteraction(ev.target as HTMLDivElement)) return;
+      const target = ev.currentTarget as HTMLDivElement;
+      const id = target.dataset.id as string;
 
-        if (data[id].isFolder) {
-          toggleFolderExpanded(id);
-        } else {
-          onItemFocused(data[id].data);
-          focusItem(id);
-        }
-      },
-      [],
-    );
+      if (data[id].isFolder) {
+        toggleFolderExpanded(id);
+      } else {
+        onItemFocused(data[id].data);
+        focusItem(id);
+      }
+    };
 
     const handleDragEnd = (result) => {
       if (!result.draggableId) return;
@@ -155,45 +145,36 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       }
     };
 
-    const handleItemDataChange = useCallback(
-      (item: GroupItemType) => {
-        data[item.id].data = item;
-        onDataChange(data);
-      },
-      [data],
-    );
+    const handleItemDataChange = (item: GroupItemType) => {
+      data[item.id].data = item;
+      onDataChange(data);
+    };
 
-    const handleOnDelete = useCallback(
-      (item: GroupItemType) => {
-        const items = data;
-        onDelete(item);
-        onDataChange(
-          deleteDataFromItems(
-            {
-              ...items,
-            },
-            item.id,
-          ),
-        );
-      },
-      [data],
-    );
+    const handleOnDelete = (item: GroupItemType) => {
+      const items = data;
+      onDelete(item);
+      onDataChange(
+        deleteDataFromItems(
+          {
+            ...items,
+          },
+          item.id,
+        ),
+      );
+    };
 
-    const DepthWrapper = useCallback(
-      (props: { id: string; children: ReactNode }) => {
-        const depth = getDepthById(props.id, parentIdMap);
-        return (
-          <div
-            style={{
-              paddingLeft: depth * 14,
-            }}
-          >
-            {props.children}
-          </div>
-        );
-      },
-      [parentIdMap],
-    );
+    const DepthWrapper = (props: { id: string; children: ReactNode }) => {
+      const depth = getDepthById(props.id, parentIdMap);
+      return (
+        <div
+          style={{
+            paddingLeft: depth * 14,
+          }}
+        >
+          {props.children}
+        </div>
+      );
+    };
 
     const RowRenderer = ({ index, style }) => {
       const id = listItemsIds[index];
@@ -246,37 +227,34 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       );
     };
 
-    const RenderClone = useCallback(
-      (
-        provided: DraggableProvided,
-        snapshot: DraggableStateSnapshot,
-        rubric: DraggableRubric,
-      ) => {
-        const id = listItemsIds[rubric.source.index];
-        const itemData = data[id].data;
+    const RenderClone = (
+      provided: DraggableProvided,
+      snapshot: DraggableStateSnapshot,
+      rubric: DraggableRubric,
+    ) => {
+      const id = listItemsIds[rubric.source.index];
+      const itemData = data[id].data;
 
-        return (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            <DepthWrapper id={id}>
-              <GroupItem
-                key={itemData.id}
-                data={itemData}
-                isSelected={false}
-                isExpanded={false}
-                isFocused={false}
-                SlotExtraInformation={props.SlotExtraInformation}
-                SlotBottomRightArea={props.SlotBottomRightArea}
-              />
-            </DepthWrapper>
-          </div>
-        );
-      },
-      [listItemsIds, data],
-    );
+      return (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          <DepthWrapper id={id}>
+            <GroupItem
+              key={itemData.id}
+              data={itemData}
+              isSelected={false}
+              isExpanded={false}
+              isFocused={false}
+              SlotExtraInformation={props.SlotExtraInformation}
+              SlotBottomRightArea={props.SlotBottomRightArea}
+            />
+          </DepthWrapper>
+        </div>
+      );
+    };
 
     return (
       <DragDropContext
