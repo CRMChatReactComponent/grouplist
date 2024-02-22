@@ -28,20 +28,67 @@ import { DefaultSlotType, GroupItemType } from "./type";
 import { MoreOutlined } from "@ant-design/icons";
 
 export type GroupItemPropsType = {
+  /**
+   * 数据
+   */
   data: GroupItemType;
+  /**
+   * 是否展开，
+   * 只对 folder 生效
+   */
   isExpanded?: boolean;
+  /**
+   * 是否 focus
+   * 只对 user 生效
+   */
   isFocused?: boolean;
+  /**
+   * 是否选中
+   */
   isSelected?: boolean;
+  /**
+   * 是否处于 drop over 状态
+   * 只对 folder 生效
+   */
   isOnDropOver?: boolean;
-  //  右上角 vert 按钮点击后的下拉菜单
+  /**
+   * 右上角 vert 按钮点击后的下拉菜单
+   */
   actionDropdownMenu?: DropdownProps["menu"];
+  /**
+   * 点击删除之前的回调，返回 false 将会停止删除
+   * @param data
+   */
   onBeforeDelete?: (data: GroupItemType) => CancelableReturnType;
+  /**
+   * 删除时的回调
+   * @param data
+   */
   onDeleted?: (data: GroupItemType) => void;
+  /**
+   * 数据改变时回调
+   * @param data
+   */
   onDataChange?: (data: GroupItemType) => void;
+  /**
+   * 名字和消息中间的插槽
+   */
   SlotExtraInformation?: DefaultSlotType;
+  /**
+   * 头像区域插槽
+   */
   SlotAvatarExtra?: DefaultSlotType;
+  /**
+   * 右侧下拉菜单左侧插槽
+   */
   SlotTopRightAreaLeft?: DefaultSlotType;
+  /**
+   * 右侧下拉菜单右侧插槽
+   */
   SlotTopRightAreaRight?: DefaultSlotType;
+  /**
+   * 右下角插槽
+   */
   SlotBottomRightArea?: DefaultSlotType;
 };
 

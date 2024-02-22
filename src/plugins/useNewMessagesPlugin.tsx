@@ -28,12 +28,37 @@ const DotDiv = styled.div`
 `;
 
 type Props = {
+  /**
+   * 新消息状态参数
+   */
   state: {
+    /**
+     * 新消息状态 map
+     * @example
+     * {
+     *   'zhangsan': 42
+     * }
+     * 上面数据代表着节点 id 为 `zhangsan` 的 item
+     * 有 42 个未读消息
+     */
     map: Record<GroupItemType["id"], number>;
+    /**
+     * 新消息状态 map 改变时的回调
+     * @param map
+     */
     setMap(map: Record<GroupItemType["id"], number>): void;
   };
+  /**
+   * 是否自动清空新消息，当节点被 focus 时
+   */
   isCleanNewMessageOnFocus?: boolean;
+  /**
+   * 新消息组件大小
+   */
   size?: "small" | "default";
+  /**
+   *  是否显示为小点而不是消息数量
+   */
   dot?: boolean;
 };
 

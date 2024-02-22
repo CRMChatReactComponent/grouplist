@@ -28,8 +28,23 @@ const StatusDot = styled.div<{ $color: string }>`
 `;
 
 type Props = {
+  /**
+   * 用户状态参数
+   */
   state: {
+    /**
+     * 用户状态 map
+     * @example
+     * {
+     *   'zhangsan': UserOnlineStatusEnum.ACTIVE
+     * }
+     * 上面数据代表着节点 id 为 `zhangsan` 的用户处于在线状态
+     */
     map: Record<GroupItemType["id"], UserOnlineStatusEnum | undefined>;
+    /**
+     * 用户状态 map 改变时的回调
+     * @param map
+     */
     setMap(
       map: Record<GroupItemType["id"], UserOnlineStatusEnum | undefined>,
     ): void;

@@ -39,17 +39,45 @@ import {
 export * from "./types";
 
 export type GroupListPropsType = {
+  /**
+   * 列表数据
+   */
   data: GroupListDataType;
+  /**
+   * 组件高度
+   */
   height?: number;
+  /**
+   * 插件
+   */
   plugin?: GroupListPlugin;
+  /**
+   * 右上角下拉框回调
+   * @param data
+   */
   getDropdownMenu?: (data: GroupItemType) => DropdownProps["menu"];
+  /**
+   * 列表数据改变回调
+   * @param data
+   */
   onDataChange?: (data: GroupListDataType) => void;
+  /**
+   * 列表元素删除时回调
+   * @param data
+   */
   onDelete?: (data: GroupItemType) => CancelableReturnType;
-  onItemDeleted?: (data: GroupItemType) => void;
+  /**
+   * 列表元素 focus 时回调
+   * @param data
+   */
   onItemFocused?: (data: GroupItemType) => void;
-  onItemDataChange?: (data: GroupItemType) => void;
-  onItemAdd?: (data: GroupItemType, parent: GroupItemType | null) => void;
+  /**
+   * 头部插槽
+   */
   SlotHeader?: ReactNode;
+  /**
+   * 底部插槽
+   */
   SlotFooter?: ReactNode;
 } & Pick<
   GroupItemPropsType,

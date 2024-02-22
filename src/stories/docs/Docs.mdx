@@ -1,0 +1,24 @@
+import * as GroupList from "../GroupList.stories.tsx";
+import Readme from "./docs.md?raw";
+import { Canvas, Meta, Markdown } from "@storybook/blocks";
+
+<Meta title="Documentation" />
+
+# GroupList 组件
+
+这是一个目录（tree）组件，旨在为开发人员提供一个统一的方式来生成具有多层级结构的侧边栏目录。
+
+主要特性如下
+
+1. 在不同的软件和插件中统一了数据格式
+2. typescript 覆盖率 (100%)
+3. tree 接口渲染支持
+4. 丰富的 API 接口，满足了大部分场景下的数据处理
+5. 丰富的自定义 Slot，增加了可扩展性和灵活性，你可以在大多数地方插入你想要的内容
+6. 插件系统，可以根据你的需求来安装预设的插件。
+
+## Demo
+
+<Canvas of={GroupList.Basic} />
+
+<Markdown>{Readme}</Markdown>

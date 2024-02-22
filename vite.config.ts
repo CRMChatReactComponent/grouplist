@@ -19,7 +19,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "grouplist",
-      formats: ["es", "umd"],
+      formats: ["es"],
       fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
@@ -32,6 +32,12 @@ export default defineConfig({
         "react-i18next",
         "emoji-picker-react",
         "lodash-es",
+        "color",
+        "immer",
+        "styled-components",
+        "react-beautiful-dnd",
+        "react-virtualized-auto-sizer",
+        "react-window",
       ],
     },
   },

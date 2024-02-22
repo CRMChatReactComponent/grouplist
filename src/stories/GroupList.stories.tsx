@@ -28,7 +28,7 @@ const meta = {
       props?.onDataChange?.(data);
     }
     return (
-      <div style={{ width: 420, border: "1px solid #f20" }}>
+      <div style={{ width: 420 }}>
         <GroupList
           {...omit(props, ["data", "onDataChange"])}
           data={data}
@@ -175,7 +175,7 @@ export const PluginNewMessage: Story = {
     }
 
     return (
-      <div style={{ width: 420, border: "1px solid #f20" }}>
+      <div style={{ width: 420 }}>
         <GroupList
           {...omit(props, ["data", "onDataChange", "plugin"])}
           data={data}

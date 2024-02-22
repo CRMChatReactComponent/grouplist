@@ -5,20 +5,47 @@ import { PluginType } from "@/types";
 import styled from "styled-components";
 
 type Props = {
+  /**
+   * 由于可能会存在多个 selects，所以需要为每个插件指定一个唯一 ID
+   */
   uniqueId: string;
+  /**
+   * 状态参数
+   */
   state: {
+    /**
+     * 当前选中的 ids
+     */
     ids: GroupItemType["id"][];
+    /**
+     * 选中 ids 更新时回调
+     * @param ids
+     */
     setIds(ids: GroupItemType["id"][]): void;
   };
-  //  选中 folder 时是否要自动选中所有子节点
+  /**
+   * 选中 folder 时是否要自动选中所有子节点
+   */
   isAutoSelectChildren?: boolean;
+  /**
+   * 选择框颜色
+   */
   color?: string;
-  //  处理 checkbox 样式
+  /**
+   * 选择框 props 回调
+   * 每次渲染 checkbox 时都会执行这个，你可以通过这个参数来控制
+   * 节点上的 checkbox 的 disabled 或者 hidden
+   * @param data
+   */
   getCheckboxProps?: (data: GroupItemType) => {
     disabled?: boolean;
     hidden?: boolean;
   };
-  //  当选中时，进行判断是否可以选中
+  /**
+   * 当选中时，进行判断是否可以选中
+   * 如果返回 false 将不会被选中
+   * @param data
+   */
   allowToCheck?: (data: GroupItemType) => boolean;
 } & Pick<PluginType, "priority">;
 
