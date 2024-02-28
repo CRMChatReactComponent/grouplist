@@ -33,6 +33,8 @@ export interface GroupItemType {
    * 类型，USER or FOLDER
    */
   type: GroupItemTypeEnum;
+
+  [key: string]: any;
 }
 
 export type DefaultSlotType = (
