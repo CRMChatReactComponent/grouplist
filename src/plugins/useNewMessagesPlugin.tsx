@@ -67,6 +67,12 @@ type Props = {
 };
 
 let cacheUnreadMap = "";
+let isVisible = true;
+
+// 监听visibilitychange事件
+document.addEventListener("visibilitychange", function () {
+  isVisible = document.visibilityState === "visible";
+});
 
 export function useNewMessagesPlugin(props: Props) {
   const {
@@ -142,9 +148,7 @@ export function useNewMessagesPlugin(props: Props) {
         if (isAutoMoveToTopWhenNewMessageCome) {
           //
           //  判断新消息进入时是否要自动置顶
-          if (!cacheUnreadMap) {
-            cacheUnreadMap = JSON.stringify(state.map);
-          } else if (JSON.stringify(state.map) !== cacheUnreadMap) {
+          if (JSON.stringify(state.map) !== cacheUnreadMap) {
             const data = props.data;
             const unreadCountSortArr = Object.keys(state.map);
 
@@ -152,6 +156,7 @@ export function useNewMessagesPlugin(props: Props) {
               return state.map[left] - state.map[right];
             });
 
+            let isHaveChange = false;
             for (const key in data) {
               const item = data[key];
               if (!item.isFolder) continue;
@@ -161,9 +166,13 @@ export function useNewMessagesPlugin(props: Props) {
                   unreadCountSortArr.indexOf(left)
                 );
               });
+              isHaveChange = true;
             }
 
-            props.data = data;
+            if (isHaveChange) {
+              //  @ts-ignore
+              isVisible && props.onDataChange({ ...data });
+            }
 
             cacheUnreadMap = JSON.stringify(state.map);
           }
