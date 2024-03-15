@@ -53,6 +53,10 @@ type Props = {
    */
   isCleanNewMessageOnFocus?: boolean;
   /**
+   * 新消息来到时是否自动置顶
+   */
+  isAutoMoveToTopWhenNewMessageCome?: boolean;
+  /**
    * 新消息组件大小
    */
   size?: "small" | "default";
@@ -62,12 +66,15 @@ type Props = {
   dot?: boolean;
 };
 
+let cacheUnreadMap = "";
+
 export function useNewMessagesPlugin(props: Props) {
   const {
     size = "default",
     dot = false,
     state,
     isCleanNewMessageOnFocus = false,
+    isAutoMoveToTopWhenNewMessageCome = true,
   } = props ?? {};
 
   function getMessageCount(id: GroupItemType["id"]): string {
@@ -131,6 +138,37 @@ export function useNewMessagesPlugin(props: Props) {
             </>
           );
         };
+
+        if (isAutoMoveToTopWhenNewMessageCome) {
+          //
+          //  判断新消息进入时是否要自动置顶
+          if (!cacheUnreadMap) {
+            cacheUnreadMap = JSON.stringify(state.map);
+          } else if (JSON.stringify(state.map) !== cacheUnreadMap) {
+            const data = props.data;
+            const unreadCountSortArr = Object.keys(state.map);
+
+            unreadCountSortArr.sort((left, right) => {
+              return state.map[left] - state.map[right];
+            });
+
+            for (const key in data) {
+              const item = data[key];
+              if (!item.isFolder) continue;
+              data[key].children.sort((left, right) => {
+                return (
+                  unreadCountSortArr.indexOf(right) -
+                  unreadCountSortArr.indexOf(left)
+                );
+              });
+            }
+
+            props.data = data;
+
+            cacheUnreadMap = JSON.stringify(state.map);
+          }
+        }
+
         return props;
       },
     } as PluginType,

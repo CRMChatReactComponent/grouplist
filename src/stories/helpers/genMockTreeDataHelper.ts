@@ -6,7 +6,7 @@ import { GroupItemTypeEnum } from "../../enums";
 import { faker } from "@faker-js/faker";
 
 const MAX_CHILDREN_SIZE = 10;
-const MAX_DEPTH = 4;
+const MAX_DEPTH = 2;
 
 export function genMockTreeData() {
   const tree: GroupListDataType = {
