@@ -70,9 +70,11 @@ let cacheUnreadMap = "";
 let isVisible = true;
 
 // 监听visibilitychange事件
-document.addEventListener("visibilitychange", function () {
-  isVisible = document.visibilityState === "visible";
-});
+try {
+  window.document.addEventListener("visibilitychange", function () {
+    isVisible = window.document.visibilityState === "visible";
+  });
+} catch (e) {}
 
 export function useNewMessagesPlugin(props: Props) {
   const {
@@ -172,6 +174,7 @@ export function useNewMessagesPlugin(props: Props) {
             cacheUnreadMap = JSON.stringify(state.map);
 
             if (isHaveChange) {
+              console.log("visible", isVisible);
               //  @ts-ignore
               isVisible && props.onDataChange({ ...data });
             }
