@@ -169,12 +169,12 @@ export function useNewMessagesPlugin(props: Props) {
               isHaveChange = true;
             }
 
+            cacheUnreadMap = JSON.stringify(state.map);
+
             if (isHaveChange) {
               //  @ts-ignore
               isVisible && props.onDataChange({ ...data });
             }
-
-            cacheUnreadMap = JSON.stringify(state.map);
           }
         }
 
