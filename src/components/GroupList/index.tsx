@@ -1,4 +1,11 @@
-import { ReactNode, useState, forwardRef, useImperativeHandle } from "react";
+import {
+  ReactNode,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  memo,
+  MouseEventHandler,
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -8,7 +15,11 @@ import {
   DraggableRubric,
 } from "react-beautiful-dnd";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList as List } from "react-window";
+import {
+  FixedSizeList as List,
+  areEqual,
+  ListChildComponentProps,
+} from "react-window";
 import { DropdownProps } from "antd";
 import { omit } from "lodash-es";
 import GroupItem, { GroupItemPropsType } from "@/components/GroupItem";
@@ -18,7 +29,7 @@ import {
   getDepthById,
 } from "@/components/GroupList/helpers/dataOperation";
 import { isElDisableInteraction } from "@/components/GroupList/helpers/disableInteractionHelper";
-import { useData } from "@/components/GroupList/hooks/useData";
+import { ParentIdMapType, useData } from "@/components/GroupList/hooks/useData";
 import {
   useDataModifyAPI,
   UseDataModifyAPIReturnType,
@@ -35,6 +46,7 @@ import {
   HeaderWrapper,
   FooterWrapper,
 } from "./index.styled";
+import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 
 export * from "./types";
 
@@ -191,70 +203,6 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       );
     };
 
-    const DepthWrapper = (props: { id: string; children: ReactNode }) => {
-      const depth = getDepthById(props.id, parentIdMap);
-      return (
-        <div
-          style={{
-            paddingLeft: depth * 14,
-          }}
-        >
-          {props.children}
-        </div>
-      );
-    };
-
-    const RowRenderer = ({ index, style }) => {
-      const id = listItemsIds[index];
-      const itemData = data[id].data;
-      const isExpanded = viewStates.expanded.includes(id);
-      const isSelected = viewStates.selected.includes(id);
-      const isFocused = viewStates.focused === id;
-
-      // 渲染每一行的逻辑
-      return (
-        <Draggable draggableId={id} index={index} key={id}>
-          {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
-            const isOnDropOver =
-              data[id].isFolder && Boolean(snapshot.combineTargetFor);
-            return (
-              <div
-                key={id}
-                style={style}
-                data-id={itemData.id}
-                onClick={handleGroupItemClick}
-              >
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  <DepthWrapper id={id}>
-                    <GroupItem
-                      key={itemData.id}
-                      data={itemData}
-                      isSelected={isSelected}
-                      isExpanded={isExpanded}
-                      isFocused={isFocused}
-                      isOnDropOver={isOnDropOver}
-                      actionDropdownMenu={getDropdownMenu(itemData)}
-                      onDataChange={handleItemDataChange}
-                      onDeleted={handleOnDelete}
-                      SlotExtraInformation={props.SlotExtraInformation}
-                      SlotTopRightAreaLeft={props.SlotTopRightAreaLeft}
-                      SlotTopRightAreaRight={props.SlotTopRightAreaRight}
-                      SlotBottomRightArea={props.SlotBottomRightArea}
-                      SlotAvatarExtra={props.SlotAvatarExtra}
-                    />
-                  </DepthWrapper>
-                </div>
-              </div>
-            );
-          }}
-        </Draggable>
-      );
-    };
-
     const RenderClone = (
       provided: DraggableProvided,
       snapshot: DraggableStateSnapshot,
@@ -269,7 +217,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <DepthWrapper id={id}>
+          <DepthWrapper id={id} parentIdMap={parentIdMap}>
             <GroupItem
               key={itemData.id}
               data={itemData}
@@ -312,6 +260,17 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                       outerRef={provided.innerRef}
                       layout={"vertical"}
                       overscanCount={2}
+                      itemData={{
+                        listItemsIds,
+                        viewStates,
+                        handleGroupItemClick,
+                        parentIdMap,
+                        getDropdownMenu,
+                        handleItemDataChange,
+                        handleOnDelete,
+                        props,
+                        data,
+                      }}
                     >
                       {RowRenderer}
                     </List>
@@ -328,7 +287,101 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
     );
   },
 );
-
 GroupList.displayName = "GroupList";
+
+const DepthWrapper = memo(
+  (props: {
+    id: string;
+    children: ReactNode;
+    parentIdMap: ParentIdMapType;
+  }) => {
+    const depth = getDepthById(props.id, props.parentIdMap);
+    return (
+      <div
+        style={{
+          paddingLeft: depth * 14,
+        }}
+      >
+        {props.children}
+      </div>
+    );
+  },
+);
+DepthWrapper.displayName = "DepthWrapper";
+
+const RowRenderer = memo<
+  ListChildComponentProps<{
+    listItemsIds: string[];
+    viewStates: ViewStateType;
+    handleGroupItemClick: MouseEventHandler<HTMLDivElement>;
+    parentIdMap: ParentIdMapType;
+    getDropdownMenu: GroupListPropsType["getDropdownMenu"];
+    handleItemDataChange: (item: GroupItemType) => void;
+    handleOnDelete: (item: GroupItemType) => void;
+    props: GroupListPropsType;
+    data: GroupListDataType;
+  }>
+>(({ index, style, data: _data }) => {
+  const {
+    listItemsIds,
+    viewStates,
+    handleGroupItemClick,
+    parentIdMap,
+    getDropdownMenu = () => ({}),
+    handleItemDataChange,
+    handleOnDelete,
+    props,
+    data,
+  } = _data;
+  const id = listItemsIds[index];
+  const itemData = data[id].data;
+  const isExpanded = viewStates.expanded.includes(id);
+  const isSelected = viewStates.selected.includes(id);
+  const isFocused = viewStates.focused === id;
+
+  // 渲染每一行的逻辑
+  return (
+    <Draggable draggableId={id} index={index} key={id}>
+      {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
+        const isOnDropOver =
+          data[id].isFolder && Boolean(snapshot.combineTargetFor);
+        return (
+          <div
+            key={id}
+            style={style}
+            data-id={itemData.id}
+            onClick={handleGroupItemClick}
+          >
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              <DepthWrapper id={id} parentIdMap={parentIdMap}>
+                <GroupItem
+                  key={itemData.id}
+                  data={itemData}
+                  isSelected={isSelected}
+                  isExpanded={isExpanded}
+                  isFocused={isFocused}
+                  isOnDropOver={isOnDropOver}
+                  actionDropdownMenu={getDropdownMenu(itemData)}
+                  onDataChange={handleItemDataChange}
+                  onDeleted={handleOnDelete}
+                  SlotExtraInformation={props.SlotExtraInformation}
+                  SlotTopRightAreaLeft={props.SlotTopRightAreaLeft}
+                  SlotTopRightAreaRight={props.SlotTopRightAreaRight}
+                  SlotBottomRightArea={props.SlotBottomRightArea}
+                  SlotAvatarExtra={props.SlotAvatarExtra}
+                />
+              </DepthWrapper>
+            </div>
+          </div>
+        );
+      }}
+    </Draggable>
+  );
+}, areEqual);
+RowRenderer.displayName = "RowRenderer";
 
 export default GroupList;

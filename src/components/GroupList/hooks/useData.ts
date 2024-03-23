@@ -3,11 +3,12 @@ import { GroupItemType } from "@/components/GroupItem/type";
 import { GroupListDataType } from "@/components/GroupList";
 
 type ParentId = GroupItemType["id"] | "root";
+export type ParentIdMapType = Record<GroupItemType["id"], ParentId>;
 export type UseDataReturnType = {
   listItemsIds: GroupItemType["id"][];
 
   //  用于缓存每个 groupList 的 parent 关系
-  parentIdMap: Record<GroupItemType["id"], ParentId>;
+  parentIdMap: ParentIdMapType;
 };
 
 export function useData(

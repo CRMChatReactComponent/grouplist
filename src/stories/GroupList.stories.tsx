@@ -170,7 +170,7 @@ export const PluginNewMessage: Story = {
     }
 
     function handleDataChange(data) {
-      console.log(data,999)
+      console.log(data, 999);
       setData(data);
       props?.onDataChange?.(data);
     }
