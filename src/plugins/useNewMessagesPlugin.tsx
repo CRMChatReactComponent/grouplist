@@ -1,4 +1,5 @@
 import { GroupItemType } from "@/components/GroupItem/type";
+import { GroupListDataType } from "@/components/GroupList";
 import { GroupItemTypeEnum } from "@/enums";
 import { PluginType } from "@/types";
 import styled from "styled-components";
@@ -82,6 +83,26 @@ export function useNewMessagesPlugin(props: Props) {
     return getCountStr(count);
   }
 
+  function findNestingNewMessageCount(
+    data: GroupListDataType,
+    id: GroupItemType["id"],
+    count: number = 0,
+  ): number {
+    const item = data[id];
+    if (!item) return count;
+    if (!item.isFolder || !item.children) return count;
+
+    return item.children.reduce<number>((prev, current) => {
+      let childCount = state.map[current];
+      if (data[current].isFolder) {
+        childCount = findNestingNewMessageCount(data, current);
+      }
+
+      prev += childCount ?? 0;
+      return prev;
+    }, count);
+  }
+
   function getCountStr(count: number) {
     return count > 99 ? "99+" : String(Math.ceil(count));
   }
@@ -111,12 +132,9 @@ export function useNewMessagesPlugin(props: Props) {
           //  如果是小组的话，需要统计所有子节点的 count
           //  只统计一级
           if (_props.data.type === GroupItemTypeEnum.GROUP) {
-            const children = props.data[_props.data.id].children ?? [];
-            const totalCount = children.reduce<number>((prev, current) => {
-              prev += state.map[current] ?? 0;
-              return prev;
-            }, 0);
-            countStr = getCountStr(totalCount);
+            countStr = getCountStr(
+              findNestingNewMessageCount(props.data, _props.data.id),
+            );
           }
 
           if (countStr === "0") {
