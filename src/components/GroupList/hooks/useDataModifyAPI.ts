@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { uniq } from "lodash-es";
 import { GroupItemType } from "@/components/GroupItem/type";
 import { GroupListDataType, ViewStateType } from "@/components/GroupList";
 import { isInFolder } from "@/components/GroupList/helpers/dataOperation";
@@ -208,9 +209,11 @@ export function useDataModifyAPI(
       //  如果用户已经存在，需要从 parent 里面删除下
       if (data[item.id]) {
         const parentId = parentIdMap[item.id];
-        data[parentId].children = data[parentId].children.filter(
-          (id) => id !== item.id,
-        );
+        if (parentId !== folderId) {
+          data[parentId].children = data[parentId].children.filter(
+            (id) => id !== item.id,
+          );
+        }
       } else {
         data[item.id] = {
           isFolder: false,
@@ -219,6 +222,8 @@ export function useDataModifyAPI(
           data: item,
         };
       }
+
+      data[folderId].children = uniq(data[folderId].children);
     }
 
     onDataChange({ ...data });
