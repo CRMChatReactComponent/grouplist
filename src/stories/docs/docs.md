@@ -255,6 +255,12 @@ const listData: GroupListDataType = {
 
 > 该列表使用了虚拟滚动所以必须指定固定高度
 
+## depthPaddingLeft (可选)
+
+每一级距离左侧的 padding-left 默认值为 `14`
+
+计算方式为 depth \* depthPaddingLeft
+
 ## plugin（可选）
 
 插件实例对象，具体使用请看下文中的 [插件](#plugins)

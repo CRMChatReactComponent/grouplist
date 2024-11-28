@@ -91,6 +91,11 @@ export type GroupListPropsType = {
    * 底部插槽
    */
   SlotFooter?: ReactNode;
+  /**
+   * 每一级距离左侧的 padding-left
+   * 计算方式为 depth * depthPaddingLeft
+   */
+  depthPaddingLeft?: number;
 } & Pick<
   GroupItemPropsType,
   | "SlotBottomRightArea"
@@ -124,6 +129,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
     const {
       data,
       height = window.innerHeight * 0.8,
+      depthPaddingLeft = 14,
       onItemFocused = () => {},
       onDataChange = () => {},
       onDelete = () => {},
@@ -217,7 +223,11 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <DepthWrapper id={id} parentIdMap={parentIdMap}>
+          <DepthWrapper
+            id={id}
+            parentIdMap={parentIdMap}
+            depthPaddingLeft={depthPaddingLeft}
+          >
             <GroupItem
               key={itemData.id}
               data={itemData}
@@ -294,12 +304,13 @@ const DepthWrapper = memo(
     id: string;
     children: ReactNode;
     parentIdMap: ParentIdMapType;
+    depthPaddingLeft: number;
   }) => {
     const depth = getDepthById(props.id, props.parentIdMap);
     return (
       <div
         style={{
-          paddingLeft: depth * 14,
+          paddingLeft: depth * props.depthPaddingLeft,
         }}
       >
         {props.children}
@@ -357,7 +368,11 @@ const RowRenderer = memo<
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <DepthWrapper id={id} parentIdMap={parentIdMap}>
+              <DepthWrapper
+                id={id}
+                parentIdMap={parentIdMap}
+                depthPaddingLeft={props.depthPaddingLeft as number}
+              >
                 <GroupItem
                   key={itemData.id}
                   data={itemData}
