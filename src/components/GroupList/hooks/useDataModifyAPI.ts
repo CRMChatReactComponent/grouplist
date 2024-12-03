@@ -119,10 +119,17 @@ export function useDataModifyAPI(
     viewStates: ViewStateType;
     onDataChange(data: GroupListDataType): void;
     setViewStates: Dispatch<SetStateAction<ViewStateType>>;
+    alwaysMakeFolderTop: boolean;
   } & UseDataReturnType,
 ): UseDataModifyAPIReturnType {
-  const { data, listItemsIds, parentIdMap, onDataChange, setViewStates } =
-    props;
+  const {
+    data,
+    listItemsIds,
+    parentIdMap,
+    alwaysMakeFolderTop,
+    onDataChange,
+    setViewStates,
+  } = props;
 
   const getAllItemsFromFolder: UseDataModifyAPIReturnType["getAllItemsFromFolder"] =
     (folderId, ids = []) => {
@@ -166,7 +173,7 @@ export function useDataModifyAPI(
       },
     };
 
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   const removeItemsFromFolderByIds: UseDataModifyAPIReturnType["removeItemsFromFolderByIds"] =
@@ -194,7 +201,7 @@ export function useDataModifyAPI(
         (id) => !itemIds.includes(id),
       );
 
-      onDataChange({ ...data });
+      _onDataChange({ ...data });
     };
 
   const addItemsToFolder: UseDataModifyAPIReturnType["addItemsToFolder"] = (
@@ -226,7 +233,7 @@ export function useDataModifyAPI(
       data[folderId].children = uniq(data[folderId].children);
     }
 
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   const addItemsToFolderByIds: UseDataModifyAPIReturnType["addItemsToFolderByIds"] =
@@ -334,13 +341,13 @@ export function useDataModifyAPI(
   const deleteItems: UseDataModifyAPIReturnType["deleteItems"] = (ids) => {
     const deletedIds = ids.map((id) => _deleteFolder(id)).flat();
     _cleanUpItems(deletedIds);
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   const deleteItem: UseDataModifyAPIReturnType["deleteItem"] = (id) => {
     const deletedIds = _deleteFolder(id);
     _cleanUpItems(deletedIds);
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   const _moveItemToFolder: UseDataModifyAPIReturnType["_moveItemToFolder"] = (
@@ -361,7 +368,7 @@ export function useDataModifyAPI(
     const parentChildren = data[destFolderId]?.children ?? [];
     parentChildren.unshift(targetId);
 
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   const _moveItemToIndex: UseDataModifyAPIReturnType["_moveItemToIndex"] = (
@@ -412,7 +419,7 @@ export function useDataModifyAPI(
       );
     }
 
-    onDataChange({ ...data });
+    _onDataChange({ ...data });
   };
 
   function _deleteFolder(folderId, deletedId: string[] = []) {
@@ -459,6 +466,58 @@ export function useDataModifyAPI(
         }
       }),
     );
+  }
+
+  function _onDataChange(data: GroupListDataType) {
+    if (alwaysMakeFolderTop) {
+      sortFolderStructure(data);
+    }
+    onDataChange(data);
+  }
+
+  function sortFolderStructure(data: GroupListDataType): GroupListDataType {
+    // Helper function to sort children of a folder
+    const sortChildren = (children: string[]): string[] => {
+      return children.sort((a, b) => {
+        const itemA = data[a];
+        const itemB = data[b];
+
+        // If both are folders or both are not folders, maintain original order
+        if (itemA.isFolder === itemB.isFolder) {
+          return 0;
+        }
+
+        // If itemA is a folder and itemB is not, itemA should come first
+        return itemA.isFolder ? -1 : 1;
+      });
+    };
+
+    // Process each item in the structure
+    const processItem = (itemId: string) => {
+      const item = data[itemId];
+
+      if (item.isFolder && item.children.length > 0) {
+        // Sort immediate children
+        item.children = sortChildren(item.children);
+
+        // Recursively process each child
+        item.children.forEach((childId) => {
+          processItem(childId);
+        });
+      }
+    };
+
+    // Start processing from root
+    if (data.root) {
+      processItem("root");
+    } else {
+      // If there's no root, process all top-level items
+      Object.keys(data).forEach((itemId) => {
+        processItem(itemId);
+      });
+    }
+
+    return data;
   }
 
   return {

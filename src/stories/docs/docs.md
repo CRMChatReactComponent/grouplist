@@ -261,6 +261,10 @@ const listData: GroupListDataType = {
 
 计算方式为 depth \* depthPaddingLeft
 
+## alwaysMakeFolderTop (可选)
+
+总是将文件夹放到 `children` 的最上方 默认值为 `false`,
+
 ## plugin（可选）
 
 插件实例对象，具体使用请看下文中的 [插件](#plugins)

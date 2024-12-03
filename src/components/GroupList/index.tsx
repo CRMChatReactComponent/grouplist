@@ -96,6 +96,10 @@ export type GroupListPropsType = {
    * 计算方式为 depth * depthPaddingLeft
    */
   depthPaddingLeft?: number;
+  /**
+   * 总是将 folder 置顶排序
+   */
+  alwaysMakeFolderTop?: boolean;
 } & Pick<
   GroupItemPropsType,
   | "SlotBottomRightArea"
@@ -134,6 +138,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       onDataChange = () => {},
       onDelete = () => {},
       getDropdownMenu = () => ({}),
+      alwaysMakeFolderTop = false,
     }: GroupListPropsType = props;
 
     const { listItemsIds, parentIdMap } = useData(data, viewStates.expanded);
@@ -144,6 +149,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       viewStates,
       onDataChange,
       setViewStates,
+      alwaysMakeFolderTop,
     });
 
     const {
