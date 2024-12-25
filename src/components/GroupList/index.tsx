@@ -323,6 +323,17 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                                 actionDropdownMenu={getDropdownMenu(itemData)}
                                 onDataChange={handleItemDataChange}
                                 onDeleted={handleOnDelete}
+                                SlotExtraInformation={
+                                  props.SlotExtraInformation
+                                }
+                                SlotTopRightAreaLeft={
+                                  props.SlotTopRightAreaLeft
+                                }
+                                SlotTopRightAreaRight={
+                                  props.SlotTopRightAreaRight
+                                }
+                                SlotBottomRightArea={props.SlotBottomRightArea}
+                                SlotAvatarExtra={props.SlotAvatarExtra}
                               />
                             </div>
                           );
