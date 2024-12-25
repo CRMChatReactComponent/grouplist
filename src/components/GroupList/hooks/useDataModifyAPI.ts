@@ -94,6 +94,13 @@ export type UseDataModifyAPIReturnType = {
     folderId: GroupItemType["id"],
     _ids?: GroupItemType["id"][],
   ): GroupItemType["id"][];
+  /**
+   * 将文件夹放在最前面
+   * 直接通过 groupData 时候可能无法触发 alwaysMakeFolderTop 的逻辑
+   * 所以需要手动调用
+   * @param value
+   */
+  setFolderToTop(): void;
 
   /**
    * 将一个 item/folder 移动到指定的 index 位置
@@ -475,6 +482,12 @@ export function useDataModifyAPI(
     onDataChange(data);
   }
 
+  function setFolderToTop() {
+    const newData = { ...data };
+    sortFolderStructure(newData);
+    onDataChange(newData);
+  }
+
   function sortFolderStructure(data: GroupListDataType): GroupListDataType {
     // Helper function to sort children of a folder
     const sortChildren = (children: string[]): string[] => {
@@ -535,6 +548,7 @@ export function useDataModifyAPI(
     addItemsToFolderByIds,
     removeItemsFromFolderByIds,
     addAFolder,
+    setFolderToTop,
     _moveItemToIndex,
     _moveItemToFolder,
   };
