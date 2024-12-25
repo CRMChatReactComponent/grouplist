@@ -19,5 +19,7 @@ export interface I18nResourceInterface {
     confirmToDelete: "确定删除吗？该操作无法回退！";
     cancelText: "取消";
     confirmText: "确认";
+    search: "搜索";
+    noSearchResult: "没有搜索结果";
   };
 }

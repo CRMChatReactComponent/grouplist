@@ -12,5 +12,7 @@
   "dangerOperation": "Danger Operation",
   "confirmToDelete": "Are you sure you want to delete? This action cannot be undone!",
   "cancelText": "Cancel",
-  "confirmText": "Confirm"
+  "confirmText": "Confirm",
+  "search": "Search",
+  "noSearchResult": "No search result"
 }

@@ -9,12 +9,49 @@ export type UseDataReturnType = {
 
   //  用于缓存每个 groupList 的 parent 关系
   parentIdMap: ParentIdMapType;
+
+  searchFilteredData: GroupListDataType;
 };
 
 export function useData(
   data: GroupListDataType,
   expandedIds: GroupItemType["id"][],
+  searchValue: string,
 ): UseDataReturnType {
+  const searchFilteredData = useMemo(() => {
+    return Object.entries(data)
+      .filter(([key, item]) => {
+        return (
+          item.data.title.toLowerCase().includes(searchValue.toLowerCase()) &&
+          !item.isFolder
+        );
+      })
+      .reduce(
+        (prev, [key, item]) => {
+          prev[key] = item;
+          prev.root.children.push(key);
+          return prev;
+        },
+        {
+          root: {
+            isFolder: true,
+            index: "root",
+            children: [] as string[],
+            data: {
+              id: "root",
+              type: 1,
+              title: "root group",
+              message: "",
+              readonly: false,
+              backgroundColor: "",
+              emoji: "",
+              avatar: "",
+            },
+          },
+        } as GroupListDataType,
+      );
+  }, [data, searchValue]);
+
   const listItemsIds = useMemo(() => {
     const ids: string[] = [];
     const rootListIds = data["root"].children as string[];
@@ -68,5 +105,6 @@ export function useData(
   return {
     listItemsIds,
     parentIdMap,
+    searchFilteredData,
   };
 }

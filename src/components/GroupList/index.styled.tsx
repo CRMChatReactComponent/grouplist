@@ -44,3 +44,10 @@ export const ItemWrap = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
+
+export const EmptyWrapper = styled.div`
+  padding: 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

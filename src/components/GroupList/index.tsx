@@ -14,13 +14,14 @@ import {
   DraggableStateSnapshot,
   DraggableRubric,
 } from "react-beautiful-dnd";
+import { useTranslation } from "react-i18next";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
   FixedSizeList as List,
   areEqual,
   ListChildComponentProps,
 } from "react-window";
-import { DropdownProps } from "antd";
+import { DropdownProps, Empty } from "antd";
 import { omit } from "lodash-es";
 import GroupItem, { GroupItemPropsType } from "@/components/GroupItem";
 import { GroupItemType } from "@/components/GroupItem/type";
@@ -39,12 +40,14 @@ import { useIsDark } from "@/hooks/useIsDark";
 import { GroupListPlugin } from "@/plugins/GroupListPlugin";
 import { CancelableReturnType } from "@/types";
 import { GroupItemHeight } from "../GroupItem/const";
+import SearchInput, { SearchInputProps } from "../SearchInput";
 import {
   Wrapper,
   ItemWrap,
   GroupListWrapper,
   HeaderWrapper,
   FooterWrapper,
+  EmptyWrapper,
 } from "./index.styled";
 import { MouseDownEvent } from "emoji-picker-react/dist/config/config";
 
@@ -59,6 +62,20 @@ export type GroupListPropsType = {
    * 组件高度
    */
   height?: number;
+  /**
+   * 每一级距离左侧的 padding-left
+   * 计算方式为 depth * depthPaddingLeft
+   */
+  depthPaddingLeft?: number;
+  /**
+   * 总是将 folder 置顶排序
+   */
+  alwaysMakeFolderTop?: boolean;
+  /**
+   * 是否显示搜索框
+   */
+  showSearchInput?: boolean;
+
   /**
    * 插件
    */
@@ -91,15 +108,6 @@ export type GroupListPropsType = {
    * 底部插槽
    */
   SlotFooter?: ReactNode;
-  /**
-   * 每一级距离左侧的 padding-left
-   * 计算方式为 depth * depthPaddingLeft
-   */
-  depthPaddingLeft?: number;
-  /**
-   * 总是将 folder 置顶排序
-   */
-  alwaysMakeFolderTop?: boolean;
 } & Pick<
   GroupItemPropsType,
   | "SlotBottomRightArea"
@@ -124,24 +132,33 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
   (_props: GroupListPropsType, ref) => {
     const plugin = _props.plugin ?? new GroupListPlugin();
     const props = plugin.resolveProps(omit(_props, ["plugin"]));
+
+    const {
+      data,
+      height = window.innerHeight * 0.8,
+      depthPaddingLeft = 14,
+      alwaysMakeFolderTop = false,
+      onItemFocused = () => {},
+      onDataChange = () => {},
+      onDelete = () => {},
+      getDropdownMenu = () => ({}),
+    }: GroupListPropsType = props;
+
+    const { t } = useTranslation();
     const [viewStates, setViewStates] = useState<ViewStateType>({
       expanded: [],
       selected: [],
       focused: "",
     });
 
-    const {
-      data,
-      height = window.innerHeight * 0.8,
-      depthPaddingLeft = 14,
-      onItemFocused = () => {},
-      onDataChange = () => {},
-      onDelete = () => {},
-      getDropdownMenu = () => ({}),
-      alwaysMakeFolderTop = false,
-    }: GroupListPropsType = props;
+    //  搜索框数据定义
+    const [searchValue, setSearchValue] = useState("");
 
-    const { listItemsIds, parentIdMap } = useData(data, viewStates.expanded);
+    const { listItemsIds, parentIdMap, searchFilteredData } = useData(
+      data,
+      viewStates.expanded,
+      searchValue ?? "",
+    );
     const API = useDataModifyAPI({
       data,
       listItemsIds,
@@ -150,6 +167,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       onDataChange,
       setViewStates,
       alwaysMakeFolderTop,
+      searchFilteredData,
     });
 
     const {
@@ -171,6 +189,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       const target = ev.currentTarget as HTMLDivElement;
       const id = target.dataset.id as string;
 
+      // 非搜索状态保持原有逻辑
       if (data[id].isFolder) {
         toggleFolderExpanded(id);
       } else {
@@ -215,6 +234,10 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
       );
     };
 
+    const handleSearchChange = (value: string) => {
+      setSearchValue(value);
+    };
+
     const RenderClone = (
       provided: DraggableProvided,
       snapshot: DraggableStateSnapshot,
@@ -257,43 +280,97 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
           {props.SlotHeader && (
             <HeaderWrapper>{props.SlotHeader}</HeaderWrapper>
           )}
+          {props.showSearchInput && (
+            <SearchInput onSearch={handleSearchChange} />
+          )}
           <GroupListWrapper $isDark={isDark} $height={height}>
-            <AutoSizer>
-              {({ width, height }) => (
-                <Droppable
-                  droppableId="droppable"
-                  mode={"virtual"}
-                  renderClone={RenderClone}
-                  isCombineEnabled={true}
-                  direction={"vertical"}
-                >
-                  {(provided) => (
-                    <List
-                      width={width}
-                      height={height}
-                      itemCount={listItemsIds.length}
-                      itemSize={GroupItemHeight}
-                      outerRef={provided.innerRef}
-                      layout={"vertical"}
-                      overscanCount={2}
-                      itemData={{
-                        listItemsIds,
-                        viewStates,
-                        handleGroupItemClick,
-                        parentIdMap,
-                        getDropdownMenu,
-                        handleItemDataChange,
-                        handleOnDelete,
-                        props,
-                        data,
-                      }}
-                    >
-                      {RowRenderer}
-                    </List>
-                  )}
-                </Droppable>
-              )}
-            </AutoSizer>
+            {searchValue ? (
+              <div style={{ height: "100%" }}>
+                {searchFilteredData.root.children.length === 0 ? (
+                  <EmptyWrapper>
+                    <Empty description={t("noSearchResult")} />
+                  </EmptyWrapper>
+                ) : (
+                  <AutoSizer>
+                    {({ width, height }) => (
+                      <List
+                        width={width}
+                        height={height}
+                        itemCount={searchFilteredData.root.children.length}
+                        itemSize={GroupItemHeight}
+                        layout={"vertical"}
+                        overscanCount={2}
+                      >
+                        {({ index, style, data: _data }) => {
+                          const id = searchFilteredData.root.children[index];
+                          const itemData = searchFilteredData[id].data;
+                          const isSelected = viewStates.selected.includes(id);
+                          const isFocused = viewStates.focused === id;
+
+                          return (
+                            <div
+                              style={style}
+                              onClick={handleGroupItemClick}
+                              data-id={itemData.id}
+                            >
+                              <GroupItem
+                                key={itemData.id}
+                                data={itemData}
+                                isSelected={isSelected}
+                                isExpanded={false}
+                                isFocused={isFocused}
+                                isOnDropOver={false}
+                                actionDropdownMenu={getDropdownMenu(itemData)}
+                                onDataChange={handleItemDataChange}
+                                onDeleted={handleOnDelete}
+                              />
+                            </div>
+                          );
+                        }}
+                      </List>
+                    )}
+                  </AutoSizer>
+                )}
+              </div>
+            ) : (
+              <AutoSizer>
+                {({ width, height }) => (
+                  <Droppable
+                    droppableId="droppable"
+                    mode={"virtual"}
+                    renderClone={RenderClone}
+                    isCombineEnabled={true}
+                    direction={"vertical"}
+                  >
+                    {(provided) => (
+                      <List
+                        width={width}
+                        height={height}
+                        itemCount={listItemsIds.length}
+                        itemSize={GroupItemHeight}
+                        outerRef={provided.innerRef}
+                        layout={"vertical"}
+                        overscanCount={2}
+                        itemData={{
+                          listItemsIds,
+                          viewStates,
+                          handleGroupItemClick,
+                          parentIdMap,
+                          getDropdownMenu,
+                          handleItemDataChange,
+                          handleOnDelete,
+                          props,
+                          data,
+                          depthPaddingLeft,
+                        }}
+                      >
+                        {RowRenderer}
+                      </List>
+                    )}
+                  </Droppable>
+                )}
+              </AutoSizer>
+            )}
           </GroupListWrapper>
           {props.SlotFooter && (
             <FooterWrapper>{props.SlotFooter}</FooterWrapper>
@@ -337,6 +414,7 @@ const RowRenderer = memo<
     handleOnDelete: (item: GroupItemType) => void;
     props: GroupListPropsType;
     data: GroupListDataType;
+    depthPaddingLeft: number;
   }>
 >(({ index, style, data: _data }) => {
   const {
@@ -349,6 +427,7 @@ const RowRenderer = memo<
     handleOnDelete,
     props,
     data,
+    depthPaddingLeft,
   } = _data;
   const id = listItemsIds[index];
   const itemData = data[id].data;
@@ -377,7 +456,7 @@ const RowRenderer = memo<
               <DepthWrapper
                 id={id}
                 parentIdMap={parentIdMap}
-                depthPaddingLeft={props.depthPaddingLeft as number}
+                depthPaddingLeft={depthPaddingLeft}
               >
                 <GroupItem
                   key={itemData.id}

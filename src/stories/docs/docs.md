@@ -261,6 +261,10 @@ const listData: GroupListDataType = {
 
 计算方式为 depth \* depthPaddingLeft
 
+## showSearchInput (可选)
+
+是否显示搜索框，默认值为 `false`
+
 ## alwaysMakeFolderTop (可选)
 
 总是将文件夹放到 `children` 的最上方 默认值为 `false`,

@@ -458,3 +458,10 @@ export const PluginSelectsMultiple: Story = {
     );
   },
 };
+
+export const WithSearch: Story = {
+  args: {
+    data: mockTreeData,
+    showSearchInput: true,
+  },
+};
