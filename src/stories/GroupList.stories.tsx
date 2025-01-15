@@ -46,6 +46,7 @@ const mockTreeData = genMockTreeData();
 export const Basic: Story = {
   args: {
     data: mockTreeData,
+
   },
 };
 

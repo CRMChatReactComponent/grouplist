@@ -486,6 +486,7 @@ const RowRenderer = memo<
                   SlotTopRightAreaRight={props.SlotTopRightAreaRight}
                   SlotBottomRightArea={props.SlotBottomRightArea}
                   SlotAvatarExtra={props.SlotAvatarExtra}
+                  avatarHook={props.avatarHook}
                 />
               </DepthWrapper>
             </div>
