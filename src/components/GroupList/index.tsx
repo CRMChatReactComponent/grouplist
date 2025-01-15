@@ -115,6 +115,7 @@ export type GroupListPropsType = {
   | "SlotTopRightAreaLeft"
   | "SlotTopRightAreaRight"
   | "SlotAvatarExtra"
+  | "avatarHook"
 >;
 
 export type GroupListHandler = Omit<
@@ -334,6 +335,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                                 }
                                 SlotBottomRightArea={props.SlotBottomRightArea}
                                 SlotAvatarExtra={props.SlotAvatarExtra}
+                                avatarHook={props.avatarHook}
                               />
                             </div>
                           );
