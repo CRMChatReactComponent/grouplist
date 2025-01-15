@@ -90,6 +90,18 @@ export type GroupItemPropsType = {
    * 右下角插槽
    */
   SlotBottomRightArea?: DefaultSlotType;
+
+  /** hooks */
+  /**
+   * 头像钩子，在渲染头像之前调用
+   * @param data
+   * @param avatar
+   * @returns
+   */
+  avatarHook?: (
+    data: GroupItemType,
+    avatar: GroupItemType["avatar"],
+  ) => GroupItemType["avatar"];
 };
 
 const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
@@ -108,8 +120,16 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     SlotTopRightAreaRight,
     SlotBottomRightArea,
     SlotAvatarExtra,
+    avatarHook,
   }: GroupItemPropsType = props;
   const { title, message, backgroundColor, emoji, avatar, readonly, id } = data;
+
+  const avatarLink = useMemo(() => {
+    if (avatarHook) {
+      return avatarHook(data, avatar);
+    }
+    return avatar;
+  }, [avatar, avatarHook, data]);
 
   const actionDropdownProps = useActionDropdownProps({
     data,
@@ -164,7 +184,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
       >
         <AvatarWrapper className={DISABLED_ITEM_INTERACTION_CLASS}>
           <AvatarAndEmoji
-            avatar={avatar}
+            avatar={avatarLink}
             emoji={emoji}
             defaultEmoji={defaultEmoji}
             allowDelete={true}

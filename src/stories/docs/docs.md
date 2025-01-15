@@ -324,6 +324,26 @@ const listData: GroupListDataType = {
 />
 ```
 
+# Hooks
+
+Hooks 是 GroupList 提供的一系列钩子，你可以通过这些钩子来在内部渲染时改变一些值
+
+## avatarHook
+
+`(data: GroupItemType, avatar: GroupItemType['avatar']) => GroupItemType['avatar']`
+
+在渲染头像时调用，你可以通过这个钩子来改变头像的链接
+
+比如下面这样，每次渲染 `GroupItem` 时，都会给头像链接后面拼接一个随机数，以保证每次渲染时头像没有缓存
+
+```tsx
+<GroupList
+  avatarHook={(data, avatar) => {
+    return avatar + `?v=${Math.random()}`;
+  }}
+/>
+```
+
 ## 类型
 
 插槽有两种类型
