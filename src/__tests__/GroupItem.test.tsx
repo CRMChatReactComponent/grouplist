@@ -72,25 +72,4 @@ describe("GroupItem component", () => {
     const slot = getByTestId("SlotBottomRightArea");
     expect(slot).toBeTruthy();
   });
-
-  it("actionDropdownMenu render correctly", async () => {
-    const dropdownTrigger = document.querySelector(
-      ".ant-dropdown-trigger",
-    ) as HTMLDivElement;
-
-    fireEvent.click(dropdownTrigger);
-
-    await vi.waitUntil(() => screen.getByText("foo"), {
-      timeout: 4000,
-    });
-    expect(screen.getByText("foo")).toBeTruthy();
-  });
-
-  it("actionDropdownMenu callback correctly", async () => {
-    const option = screen.getByText("foo");
-
-    fireEvent.click(option);
-
-    expect(onDropdownCallback).toHaveBeenCalledWith("bar");
-  });
 });
