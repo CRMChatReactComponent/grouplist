@@ -22,7 +22,8 @@ export function useData(
     return Object.entries(data)
       .filter(([key, item]) => {
         return (
-          item.data.title.toLowerCase().includes(searchValue.toLowerCase()) &&
+          (item.data.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+            item.data.id.toLowerCase().includes(searchValue.toLowerCase())) &&
           !item.isFolder
         );
       })

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Checkbox } from "antd";
 import { pull, uniq, difference } from "lodash-es";
 import { GroupItemType } from "@/components/GroupItem/type";
@@ -49,6 +50,9 @@ type Props = {
   allowToCheck?: (data: GroupItemType) => boolean;
 } & Pick<PluginType, "priority">;
 
+const DRAG_TO_SELECT_GLOBAL_KEY = "jklvhzhqekws";
+const DRAG_TO_SELECT_ACTION_GLOBAL_KEY = "jklvh2zhqekws";
+
 const CheckboxColorWrapper = styled.div<{ $color: string }>`
   margin-left: 4px;
 
@@ -92,6 +96,90 @@ export function useSelectsPlugin(props: Props) {
           const { hidden = false, disabled = false } = getCheckboxProps(
             _props.data,
           );
+
+          const warpperRef = useRef<HTMLDivElement>(null);
+
+          useEffect(() => {
+            // 递归查找包含 data-id 属性的父元素
+            let parent = getGroupItemParent();
+
+            if (parent) {
+              parent.addEventListener("mouseover", handleMouseOver);
+            }
+
+            return () => {
+              let parent = getGroupItemParent();
+              if (parent) {
+                parent.removeEventListener("mouseover", handleMouseOver);
+              }
+            };
+          }, []);
+
+          function getGroupItemParent() {
+            if (!warpperRef.current) return null;
+            let parent = warpperRef.current.parentElement;
+            while (parent) {
+              if (parent.hasAttribute("data-id")) {
+                break;
+              }
+              parent = parent.parentElement;
+              if (parent === null) {
+                break;
+              }
+            }
+            return parent;
+          }
+
+          function handleMouseOver(ev: MouseEvent) {
+            // 获取事件目标元素的位置和尺寸信息
+            const rect = (ev.target as HTMLElement).getBoundingClientRect();
+            const mouseY = ev.clientY;
+
+            // 计算元素的垂直中心区域范围(上下各留8px边缘)
+            const centerTop = rect.top + 8;
+            const centerBottom = rect.bottom - 8;
+
+            // 如果鼠标不在中心区域内,直接返回不触发
+            if (mouseY < centerTop || mouseY > centerBottom) {
+              return;
+            }
+            if (window[DRAG_TO_SELECT_GLOBAL_KEY]) {
+              if (!allowToCheck(_props.data)) return;
+              if (window[DRAG_TO_SELECT_ACTION_GLOBAL_KEY] === "select") {
+                handleSelectId(_props.data.id);
+              } else {
+                handleUnSelect(_props.data.id);
+              }
+            }
+          }
+
+          function handleCheckboxMouseDown(ev: React.MouseEvent) {
+            document.addEventListener("mouseup", handleGlobalMouseUp);
+
+            // 防止拖拽选择时选中文字
+            document.body.style.userSelect = "none";
+
+            window[DRAG_TO_SELECT_GLOBAL_KEY] = true;
+            window[DRAG_TO_SELECT_ACTION_GLOBAL_KEY] = state.ids.includes(
+              _props.data.id,
+            )
+              ? "unselect"
+              : "select";
+
+            if (!allowToCheck(_props.data)) return;
+            if (window[DRAG_TO_SELECT_ACTION_GLOBAL_KEY] === "select") {
+              handleSelectId(_props.data.id);
+            } else {
+              handleUnSelect(_props.data.id);
+            }
+          }
+
+          function handleGlobalMouseUp() {
+            document.body.style.userSelect = "";
+            window[DRAG_TO_SELECT_GLOBAL_KEY] = false;
+
+            document.removeEventListener("mouseup", handleGlobalMouseUp);
+          }
 
           function handleSelectId(id: GroupItemType["id"]) {
             const needAddIds: GroupItemType["id"][] = [id];
@@ -139,7 +227,11 @@ export function useSelectsPlugin(props: Props) {
             <>
               {PrevSlot && <PrevSlot {..._props} />}
               {!hidden && (
-                <CheckboxColorWrapper $color={color}>
+                <CheckboxColorWrapper
+                  $color={color}
+                  ref={warpperRef}
+                  onMouseDown={handleCheckboxMouseDown}
+                >
                   <Checkbox
                     disabled={disabled}
                     checked={state.ids.includes(_props.data.id)}

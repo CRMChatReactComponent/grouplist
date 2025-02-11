@@ -144,6 +144,19 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     },
   });
 
+  const actionDropdownPropsContextMenu = useActionDropdownProps({
+    data,
+    actionDropdownMenu,
+    onDeleted,
+    onBeforeDelete,
+    onColorChange(color: string) {
+      handleDataValueChange("backgroundColor", color);
+    },
+    onTitleChange(title: string) {
+      handleDataValueChange("title", title);
+    },
+  });
+
   const { bg, hoverBg, isDarkBgColor } =
     useGroupItemBackgroundColor(backgroundColor);
   const isDark = useIsDark();
@@ -202,74 +215,76 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
           )}
         </AvatarWrapper>
 
-        {/*中间区域(包含右上角的 vert*/}
-        <CenterBox
-          $space={AVATAR_SIZE + 18}
-          $gap={isHaveMiddleInformation ? 0 : 8}
-        >
-          <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
-            <TitleSpan>{title}</TitleSpan>
+        <Dropdown {...actionDropdownPropsContextMenu} trigger={["contextMenu"]}>
+          {/*中间区域(包含右上角的 vert*/}
+          <CenterBox
+            $space={AVATAR_SIZE + 18}
+            $gap={isHaveMiddleInformation ? 0 : 8}
+          >
+            <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
+              <TitleSpan>{title}</TitleSpan>
 
-            {/*右上角功能区域*/}
-            <TopRightCornerBox className={DISABLED_ITEM_INTERACTION_CLASS}>
-              {SlotTopRightAreaLeft && (
-                <SlotTopRightAreaLeft
-                  isFocused={isFocused}
-                  isExpanded={isExpanded}
-                  isSelected={isSelected}
-                  data={data}
-                />
-              )}
-
-              <TopRightCornerBoxVertButton>
-                <Dropdown {...actionDropdownProps}>
-                  <button>
-                    <MoreOutlined style={{ fontSize: 16 }} />
-                  </button>
-                </Dropdown>
-              </TopRightCornerBoxVertButton>
-
-              {SlotTopRightAreaRight && (
-                <SlotTopRightAreaRight
-                  isFocused={isFocused}
-                  isExpanded={isExpanded}
-                  isSelected={isSelected}
-                  data={data}
-                />
-              )}
-            </TopRightCornerBox>
-          </CenterTopBox>
-
-          {/*额外信息注入*/}
-          {SlotExtraInformation && (
-            <SlotExtraInformationWrapper>
-              <SlotExtraInformation
-                isFocused={isFocused}
-                isExpanded={isExpanded}
-                isSelected={isSelected}
-                data={data}
-              />
-            </SlotExtraInformationWrapper>
-          )}
-
-          {/*消息*/}
-          <CenterBottomBox>
-            <MessageSpan>{message}</MessageSpan>
-            {/*右下角插槽*/}
-            <div className={DISABLED_ITEM_INTERACTION_CLASS}>
-              <SlotBottomRightAreaContainer>
-                {SlotBottomRightArea && (
-                  <SlotBottomRightArea
+              {/*右上角功能区域*/}
+              <TopRightCornerBox className={DISABLED_ITEM_INTERACTION_CLASS}>
+                {SlotTopRightAreaLeft && (
+                  <SlotTopRightAreaLeft
                     isFocused={isFocused}
                     isExpanded={isExpanded}
                     isSelected={isSelected}
                     data={data}
                   />
                 )}
-              </SlotBottomRightAreaContainer>
-            </div>
-          </CenterBottomBox>
-        </CenterBox>
+
+                <TopRightCornerBoxVertButton>
+                  <Dropdown {...actionDropdownProps}>
+                    <button>
+                      <MoreOutlined style={{ fontSize: 16 }} />
+                    </button>
+                  </Dropdown>
+                </TopRightCornerBoxVertButton>
+
+                {SlotTopRightAreaRight && (
+                  <SlotTopRightAreaRight
+                    isFocused={isFocused}
+                    isExpanded={isExpanded}
+                    isSelected={isSelected}
+                    data={data}
+                  />
+                )}
+              </TopRightCornerBox>
+            </CenterTopBox>
+
+            {/*额外信息注入*/}
+            {SlotExtraInformation && (
+              <SlotExtraInformationWrapper>
+                <SlotExtraInformation
+                  isFocused={isFocused}
+                  isExpanded={isExpanded}
+                  isSelected={isSelected}
+                  data={data}
+                />
+              </SlotExtraInformationWrapper>
+            )}
+
+            {/*消息*/}
+            <CenterBottomBox>
+              <MessageSpan>{message}</MessageSpan>
+              {/*右下角插槽*/}
+              <div className={DISABLED_ITEM_INTERACTION_CLASS}>
+                <SlotBottomRightAreaContainer>
+                  {SlotBottomRightArea && (
+                    <SlotBottomRightArea
+                      isFocused={isFocused}
+                      isExpanded={isExpanded}
+                      isSelected={isSelected}
+                      data={data}
+                    />
+                  )}
+                </SlotBottomRightAreaContainer>
+              </div>
+            </CenterBottomBox>
+          </CenterBox>
+        </Dropdown>
       </Wrapper>
     </Container>
   );
