@@ -632,3 +632,52 @@ export type UseDataModifyAPIReturnType = {
   setFolderToTop(): void;
 };
 ```
+
+# 多语言
+
+在包裹 <I18nContextCmp/> 组件时，你可以传入自己的 i18n 内容，来处理自己的多语言翻译
+
+> 如果不传入 i18n 的情况下会使用内部的语言包（只支持 中文，英文）
+
+```tsx
+import i18n from "i18next";
+
+//  加载所有语言包
+// 参考 https://github.com/CRMChatReactComponent/grouplist/tree/main/src/i18n/locales
+const modules = import.meta.glob("./locales/**/*.json", {
+  eager: true,
+}) as Record<string, { default: never }>;
+const localeTransitions = Object.entries(modules).reduce(
+  (prev, current) => {
+    const [path, module] = current;
+    const lang = path.match(/\/locales\/([\w-]+)\//);
+    const filename = path.match(/\/([\w-_]+)\.json$/);
+
+    if (filename && lang) {
+      prev[lang[1]] = prev[lang[1]] || {};
+      prev[lang[1]][filename[1]] = module.default;
+    } else {
+      console.error(`无法解析文件名称 path:${path}`);
+    }
+
+    return prev;
+  },
+  {},
+);
+
+const i18nInstance = i18n.createInstance();
+
+i18nInstance.init({
+  lng: GenI18nEnum.ZH_CN,
+  debug: import.meta.env.DEV,
+  ns: Object.keys(localeTransitions),
+  resources: localeTransitions,
+});
+
+function App(){
+
+  return <I18nContextCmp i18n={i18nInstance}>
+    <GroupList ...{}/>
+  </I18nContextCmp>
+}
+```
