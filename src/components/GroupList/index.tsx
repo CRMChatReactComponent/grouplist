@@ -353,6 +353,10 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                     mode={"virtual"}
                     renderClone={RenderClone}
                     isCombineEnabled={true}
+                    /* 部分浏览器会出现 getContainerForClone 为 undefined 的问题
+                    
+                    不知道什么原因，这里手动指定下*/
+                    getContainerForClone={()=>document.body }
                     direction={"vertical"}
                   >
                     {(provided) => (
