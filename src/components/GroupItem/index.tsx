@@ -238,7 +238,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
                 <TopRightCornerBoxVertButton>
                   <Dropdown {...actionDropdownProps}>
                     <button>
-                      <MoreOutlined style={{ fontSize: 16 }} />
+                      <MoreOutlined style={{ fontSize: 20 }} />
                     </button>
                   </Dropdown>
                 </TopRightCornerBoxVertButton>

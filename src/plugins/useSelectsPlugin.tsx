@@ -54,7 +54,7 @@ const DRAG_TO_SELECT_GLOBAL_KEY = "jklvhzhqekws";
 const DRAG_TO_SELECT_ACTION_GLOBAL_KEY = "jklvh2zhqekws";
 
 const CheckboxColorWrapper = styled.div<{ $color: string }>`
-  margin-left: 4px;
+  margin-left: 12px;
 
   .ant-checkbox-checked,
   .ant-checkbox-checked:not(.ant-checkbox-disabled):hover {
@@ -70,6 +70,10 @@ const CheckboxColorWrapper = styled.div<{ $color: string }>`
 
   .ant-checkbox-indeterminate .ant-checkbox-inner:after {
     background-color: ${(p) => p.$color} !important;
+  }
+
+  .ant-checkbox-inner{
+    transform: scale(1.4);
   }
 `;
 

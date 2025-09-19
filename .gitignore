@@ -28,3 +28,5 @@ dist-ssr
 # extra
 storybook-static
 coverage
+
+pnpm-lock.yaml

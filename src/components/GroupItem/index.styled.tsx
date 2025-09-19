@@ -92,7 +92,7 @@ export const TopRightCornerBoxVertButton = styled.div`
     outline: none;
     border: none;
     border-radius: 4px;
-    padding: 1px 2px;
+    padding: 4px 4px;
     background-color: transparent;
     cursor: pointer;
   }
