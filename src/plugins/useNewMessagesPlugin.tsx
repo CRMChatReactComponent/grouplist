@@ -8,7 +8,7 @@ const NewMessageBox = styled.div<{ $size: Props["size"] }>`
   position: absolute;
   right: 16px;
   top: -6px;
-  font-size: 12px;
+  font-size: 16px;
   background: #f20;
   color: #fff;
   padding: ${(p) => (p.$size === "small" ? "0 2px" : "2px 6px")};
@@ -16,6 +16,7 @@ const NewMessageBox = styled.div<{ $size: Props["size"] }>`
   line-height: 1em;
   text-align: center;
   transform: translateX(100%);
+  border: 1px solid #f20;
 `;
 
 const DotDiv = styled.div`
