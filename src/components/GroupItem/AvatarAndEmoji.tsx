@@ -16,7 +16,7 @@ type AvatarAndEmojiProps = {
   onEmojiChange?: (source: SourceType) => void;
 };
 
-export const AVATAR_SIZE = 60;
+export const AVATAR_SIZE = 48;
 
 const EmojiDiv = styled.div<{ $disabled: boolean }>`
   width: ${AVATAR_SIZE}px;
