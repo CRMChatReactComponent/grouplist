@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Typography, Checkbox } from "antd";
+import { fn } from "storybook/test";
 import GroupItem from "../components/GroupItem/index";
 import { GroupItemTypeEnum } from "../enums";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -9,7 +10,10 @@ const { Text } = Typography;
 const meta = {
   title: "GroupItem",
   component: GroupItem,
-  argTypes: {},
+  args: {
+    onDataChange: fn(),
+    onDeleted: fn(),
+  },
   render(props) {
     const [_, update] = useState(0);
 

@@ -1,6 +1,7 @@
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { Button, ColorPicker, Select, Space, Switch, Typography } from "antd";
 import { omit, sample } from "lodash-es";
+import { fn } from "storybook/test";
 import { GroupItemType } from "../components/GroupItem/type";
 import GroupList from "../components/GroupList/index";
 import { GroupItemTypeEnum } from "../enums/index";
@@ -19,7 +20,11 @@ const { Text } = Typography;
 const meta = {
   title: "GroupList",
   component: GroupList,
-  argTypes: {},
+  args: {
+    onDataChange: fn(),
+    onDelete: fn(),
+    onItemFocused: fn(),
+  },
   render(props) {
     const [data, setData] = useState(props.data ?? {});
 

@@ -1,10 +1,13 @@
+import { fn } from "storybook/test";
 import SearchInput from "@/components/SearchInput";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "SearchInput",
   component: SearchInput,
-  argTypes: {},
+  args: {
+    onSearch: fn(),
+  },
 } satisfies Meta<typeof SearchInput>;
 
 export default meta;

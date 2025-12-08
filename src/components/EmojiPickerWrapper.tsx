@@ -32,7 +32,7 @@ const EmojiPickerWrapper: FC<EmojiPickerWrapperProps> = ({
 
   useEffect(() => {
     onOpenChange(open);
-  }, [open]);
+  }, [open, onOpenChange]);
 
   function handleEmojiSelect(emoji: EmojiClickData) {
     onSelect(emoji.unified);

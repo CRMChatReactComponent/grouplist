@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Typography } from "antd";
 import { omit } from "lodash-es";
+import { fn } from "storybook/test";
 import AvatarAndEmoji from "../components/GroupItem/AvatarAndEmoji";
 import { GroupItemTypeEnum } from "../enums";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -10,6 +11,9 @@ const { Text } = Typography;
 const meta = {
   title: "AvatarAndEmoji",
   component: AvatarAndEmoji,
+  args: {
+    onEmojiChange: fn(),
+  },
   render(props) {
     const [emoji, setEmoji] = useState(props.emoji);
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Space } from "antd";
 import "antd";
 import { omit } from "lodash-es";
+import { fn } from "storybook/test";
 import EmojiPickerWrapper from "../components/EmojiPickerWrapper";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Emoji, EmojiStyle } from "emoji-picker-react";
@@ -9,10 +10,10 @@ import { Emoji, EmojiStyle } from "emoji-picker-react";
 const meta = {
   title: "EmojiPickerWrapper",
   component: EmojiPickerWrapper,
-  argTypes: {
-    onSelect: {
-      action: {},
-    },
+  args: {
+    onSelect: fn(),
+    onDelete: fn(),
+    onOpenChange: fn(),
   },
   render(props) {
     const [emoji, setEmoji] = useState<string>();

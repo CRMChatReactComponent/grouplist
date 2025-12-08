@@ -16,7 +16,7 @@ export function useGroupItemBackgroundColor(
         return Color(token.colorBgElevated);
       } catch (e) {}
     } else {
-      let colorInstance: Color | null = null;
+      let colorInstance: ReturnType<typeof Color> | null = null;
       try {
         colorInstance = Color(backgroundColor);
       } catch (e) {}

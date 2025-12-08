@@ -1,7 +1,7 @@
 // @ts-ignore
 import { name } from "../package.json";
-import { addons } from "@storybook/manager-api";
-import { create } from "@storybook/theming";
+import { addons } from "storybook/manager-api";
+import { create } from "storybook/theming/create";
 
 addons.setConfig({
   theme: create({

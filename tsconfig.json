@@ -5,7 +5,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "useDefineForClassFields": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "noLib": false,
     "forceConsistentCasingInFileNames": true,
@@ -22,7 +22,7 @@
     "lib": ["dom", "esnext"],
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "types": ["vite/client", "node", "@storybook/types"],
+    "types": ["vite/client", "node"],
     "removeComments": false,
     "baseUrl": ".",
     "paths": {
