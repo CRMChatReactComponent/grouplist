@@ -8,6 +8,7 @@ export default mergeConfig(
       exclude: ["storybook-static/**"],
       include: ["./src/__tests__/**/*.test.{tsx,ts}"],
       environment: "jsdom",
+      setupFiles: ["./src/__tests__/helpers/setup.ts"],
       coverage: {
         provider: "v8",
         exclude: ["storybook-static/**", "src/stories/**"],

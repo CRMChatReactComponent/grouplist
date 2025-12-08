@@ -186,7 +186,7 @@ export function useNewMessagesPlugin(props: Props) {
 
             if (isHaveChange) {
               //  @ts-ignore
-              props.onDataChange({ ...data });
+              props.onDataChange?.({ ...data });
             }
           }
         }

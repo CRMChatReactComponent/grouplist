@@ -72,6 +72,7 @@ const data: GroupListDataType = {
 };
 
 export function GroupListTest(props: { onDropdownClick(): void }) {
+  const [dataState, setDataState] = useState<GroupListDataType>(data);
   const [newMessagesIdsMap, setNewMessagesIdsMap] = useState<
     Record<GroupItemType["id"], number>
   >({});
@@ -103,8 +104,9 @@ export function GroupListTest(props: { onDropdownClick(): void }) {
     <I18nContextCmp>
       <AntdApiContextProviderCmp>
         <GroupList
-          data={data}
+          data={dataState}
           plugin={plugin}
+          onDataChange={setDataState}
           getDropdownMenu={(data) => {
             if (data.type === GroupItemTypeEnum.GROUP) {
               return {
