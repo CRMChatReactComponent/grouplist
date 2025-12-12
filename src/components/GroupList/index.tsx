@@ -17,8 +17,9 @@ import {
 import { useTranslation } from "react-i18next";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
-  List,
-  type RowComponentProps,
+  FixedSizeList as List,
+  areEqual,
+  ListChildComponentProps,
 } from "react-window";
 import { DropdownProps, Empty } from "antd";
 import { omit } from "lodash-es";
@@ -292,56 +293,55 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                   </EmptyWrapper>
                 ) : (
                   <AutoSizer>
-                    {({ width, height }) => {
-                      const SearchRowComponent = ({ index, style }: RowComponentProps<object>) => {
-                        const id = searchFilteredData.root.children[index];
-                        const itemData = searchFilteredData[id].data;
-                        const isSelected = viewStates.selected.includes(id);
-                        const isFocused = viewStates.focused === id;
+                    {({ width, height }) => (
+                      <List
+                        width={width}
+                        height={height}
+                        itemCount={searchFilteredData.root.children.length}
+                        itemSize={GroupItemHeight}
+                        layout={"vertical"}
+                        overscanCount={2}
+                      >
+                        {({ index, style, data: _data }) => {
+                          const id = searchFilteredData.root.children[index];
+                          const itemData = searchFilteredData[id].data;
+                          const isSelected = viewStates.selected.includes(id);
+                          const isFocused = viewStates.focused === id;
 
-                        return (
-                          <div
-                            style={style}
-                            onClick={handleGroupItemClick}
-                            data-id={itemData.id}
-                          >
-                            <GroupItem
-                              key={itemData.id}
-                              data={itemData}
-                              isSelected={isSelected}
-                              isExpanded={false}
-                              isFocused={isFocused}
-                              isOnDropOver={false}
-                              actionDropdownMenu={getDropdownMenu(itemData)}
-                              onDataChange={handleItemDataChange}
-                              onDeleted={handleOnDelete}
-                              SlotExtraInformation={
-                                props.SlotExtraInformation
-                              }
-                              SlotTopRightAreaLeft={
-                                props.SlotTopRightAreaLeft
-                              }
-                              SlotTopRightAreaRight={
-                                props.SlotTopRightAreaRight
-                              }
-                              SlotBottomRightArea={props.SlotBottomRightArea}
-                              SlotAvatarExtra={props.SlotAvatarExtra}
-                              avatarHook={props.avatarHook}
-                            />
-                          </div>
-                        );
-                      };
-
-                      return (
-                        <List
-                          rowComponent={SearchRowComponent}
-                          rowCount={searchFilteredData.root.children.length}
-                          rowHeight={GroupItemHeight}
-                          rowProps={{}}
-                          style={{ height: "100%", width }}
-                        />
-                      );
-                    }}
+                          return (
+                            <div
+                              style={style}
+                              onClick={handleGroupItemClick}
+                              data-id={itemData.id}
+                            >
+                              <GroupItem
+                                key={itemData.id}
+                                data={itemData}
+                                isSelected={isSelected}
+                                isExpanded={false}
+                                isFocused={isFocused}
+                                isOnDropOver={false}
+                                actionDropdownMenu={getDropdownMenu(itemData)}
+                                onDataChange={handleItemDataChange}
+                                onDeleted={handleOnDelete}
+                                SlotExtraInformation={
+                                  props.SlotExtraInformation
+                                }
+                                SlotTopRightAreaLeft={
+                                  props.SlotTopRightAreaLeft
+                                }
+                                SlotTopRightAreaRight={
+                                  props.SlotTopRightAreaRight
+                                }
+                                SlotBottomRightArea={props.SlotBottomRightArea}
+                                SlotAvatarExtra={props.SlotAvatarExtra}
+                                avatarHook={props.avatarHook}
+                              />
+                            </div>
+                          );
+                        }}
+                      </List>
+                    )}
                   </AutoSizer>
                 )}
               </div>
@@ -353,8 +353,6 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                     mode={"virtual"}
                     renderClone={RenderClone}
                     isCombineEnabled={true}
-                    isDropDisabled={false}
-                    ignoreContainerClipping={false}
                     /* 部分浏览器会出现 getContainerForClone 为 undefined 的问题
                     
                     不知道什么原因，这里手动指定下*/
@@ -362,26 +360,29 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                     direction={"vertical"}
                   >
                     {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ height, width }}>
-                        <List
-                          rowComponent={RowRenderer}
-                          rowCount={listItemsIds.length}
-                          rowHeight={GroupItemHeight}
-                          rowProps={{
-                            listItemsIds,
-                            viewStates,
-                            handleGroupItemClick,
-                            parentIdMap,
-                            getDropdownMenu,
-                            handleItemDataChange,
-                            handleOnDelete,
-                            props,
-                            data,
-                            depthPaddingLeft,
-                          }}
-                          style={{ height, width }}
-                        />
-                      </div>
+                      <List
+                        width={width}
+                        height={height}
+                        itemCount={listItemsIds.length}
+                        itemSize={GroupItemHeight}
+                        outerRef={provided.innerRef}
+                        layout={"vertical"}
+                        overscanCount={2}
+                        itemData={{
+                          listItemsIds,
+                          viewStates,
+                          handleGroupItemClick,
+                          parentIdMap,
+                          getDropdownMenu,
+                          handleItemDataChange,
+                          handleOnDelete,
+                          props,
+                          data,
+                          depthPaddingLeft,
+                        }}
+                      >
+                        {RowRenderer}
+                      </List>
                     )}
                   </Droppable>
                 )}
@@ -419,18 +420,32 @@ const DepthWrapper = memo(
 );
 DepthWrapper.displayName = "DepthWrapper";
 
-function RowRenderer({ index, style, listItemsIds, viewStates, handleGroupItemClick, parentIdMap, getDropdownMenu = () => ({}), handleItemDataChange, handleOnDelete, props, data, depthPaddingLeft }: RowComponentProps<{
-  listItemsIds: string[];
-  viewStates: ViewStateType;
-  handleGroupItemClick: MouseEventHandler<HTMLDivElement>;
-  parentIdMap: ParentIdMapType;
-  getDropdownMenu: GroupListPropsType["getDropdownMenu"];
-  handleItemDataChange: (item: GroupItemType) => void;
-  handleOnDelete: (item: GroupItemType) => void;
-  props: GroupListPropsType;
-  data: GroupListDataType;
-  depthPaddingLeft: number;
-}>) {
+const RowRenderer = memo<
+  ListChildComponentProps<{
+    listItemsIds: string[];
+    viewStates: ViewStateType;
+    handleGroupItemClick: MouseEventHandler<HTMLDivElement>;
+    parentIdMap: ParentIdMapType;
+    getDropdownMenu: GroupListPropsType["getDropdownMenu"];
+    handleItemDataChange: (item: GroupItemType) => void;
+    handleOnDelete: (item: GroupItemType) => void;
+    props: GroupListPropsType;
+    data: GroupListDataType;
+    depthPaddingLeft: number;
+  }>
+>(({ index, style, data: _data }) => {
+  const {
+    listItemsIds,
+    viewStates,
+    handleGroupItemClick,
+    parentIdMap,
+    getDropdownMenu = () => ({}),
+    handleItemDataChange,
+    handleOnDelete,
+    props,
+    data,
+    depthPaddingLeft,
+  } = _data;
   const id = listItemsIds[index];
   const itemData = data[id].data;
   const isExpanded = viewStates.expanded.includes(id);
@@ -484,6 +499,7 @@ function RowRenderer({ index, style, listItemsIds, viewStates, handleGroupItemCl
       }}
     </Draggable>
   );
-}
+}, areEqual);
+RowRenderer.displayName = "RowRenderer";
 
 export default GroupList;
