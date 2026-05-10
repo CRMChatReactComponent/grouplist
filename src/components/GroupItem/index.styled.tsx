@@ -49,7 +49,7 @@ export const CenterBottomBox = styled.div`
   width: 100%;
 `;
 
-export const TitleSpan = styled.span`
+const titleStyle = `
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: auto;
@@ -58,6 +58,20 @@ export const TitleSpan = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 15px;
+`;
+
+export const TitleSpan = styled.span`
+  ${titleStyle}
+`;
+
+export const TitleLink = styled.a`
+  ${titleStyle}
+  text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
 `;
 
 export const CenterTopBox = styled.div<{ $marginTop: number }>`
@@ -104,6 +118,7 @@ export const Wrapper = styled.section<{
   $isHaveMiddleInformation: boolean;
   $isDarkBg: boolean;
   $isOnDropOver: boolean;
+  $isFocused: boolean;
 }>`
   font-family:
     system-ui,
@@ -121,7 +136,8 @@ export const Wrapper = styled.section<{
   justify-content: flex-start;
   align-items: center;
   border-radius: 4px;
-  background-color: ${(p) => (p.$isOnDropOver ? p.$bgHover : p.$bg)};
+  background-color: ${(p) =>
+    p.$isOnDropOver || p.$isFocused ? p.$bgHover : p.$bg};
   &:hover {
     background: ${(p) => p.$bgHover};
   }

@@ -15,6 +15,7 @@ import {
   Wrapper,
   CenterBox,
   TitleSpan,
+  TitleLink,
   CenterTopBox,
   CenterBottomBox,
   MessageSpan,
@@ -102,6 +103,10 @@ export type GroupItemPropsType = {
     data: GroupItemType,
     avatar: GroupItemType["avatar"],
   ) => GroupItemType["avatar"];
+  /**
+   * 当提供时，标题渲染为 <a href>，支持拖拽到新标签页
+   */
+  href?: string;
 };
 
 const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
@@ -121,6 +126,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
     SlotBottomRightArea,
     SlotAvatarExtra,
     avatarHook,
+    href,
   }: GroupItemPropsType = props;
   const { title, message, backgroundColor, emoji, avatar, readonly, id } = data;
 
@@ -194,6 +200,7 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
         $isHaveMiddleInformation={isHaveMiddleInformation}
         $isOnDropOver={isOnDropOver}
         $isDarkBg={isDarkBgColor}
+        $isFocused={isFocused}
       >
         <AvatarWrapper className={DISABLED_ITEM_INTERACTION_CLASS}>
           <AvatarAndEmoji
@@ -222,7 +229,17 @@ const GroupItem: FC<GroupItemPropsType> = (props: GroupItemPropsType) => {
             $gap={isHaveMiddleInformation ? 0 : 8}
           >
             <CenterTopBox $marginTop={isHaveMiddleInformation ? -2 : 0}>
-              <TitleSpan>{title}</TitleSpan>
+              {href ? (
+                <TitleLink
+                  href={href}
+                  onClick={(e) => e.preventDefault()}
+                  draggable={true}
+                >
+                  {title}
+                </TitleLink>
+              ) : (
+                <TitleSpan>{title}</TitleSpan>
+              )}
 
               {/*右上角功能区域*/}
               <TopRightCornerBox className={DISABLED_ITEM_INTERACTION_CLASS}>

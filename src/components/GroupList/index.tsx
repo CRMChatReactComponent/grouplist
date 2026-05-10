@@ -108,6 +108,11 @@ export type GroupListPropsType = {
    * 底部插槽
    */
   SlotFooter?: ReactNode;
+  /**
+   * 返回小组的超链接，提供后标题渲染为 <a>，支持拖拽到新标签页
+   * 对 folder 类型无效
+   */
+  getItemHref?: (data: GroupItemType) => string | undefined;
 } & Pick<
   GroupItemPropsType,
   | "SlotBottomRightArea"
@@ -307,6 +312,9 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                           const itemData = searchFilteredData[id].data;
                           const isSelected = viewStates.selected.includes(id);
                           const isFocused = viewStates.focused === id;
+                          const href = !searchFilteredData[id].isFolder
+                            ? props.getItemHref?.(itemData)
+                            : undefined;
 
                           return (
                             <div
@@ -321,6 +329,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                                 isExpanded={false}
                                 isFocused={isFocused}
                                 isOnDropOver={false}
+                                href={href}
                                 actionDropdownMenu={getDropdownMenu(itemData)}
                                 onDataChange={handleItemDataChange}
                                 onDeleted={handleOnDelete}
@@ -356,7 +365,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                     /* 部分浏览器会出现 getContainerForClone 为 undefined 的问题
                     
                     不知道什么原因，这里手动指定下*/
-                    getContainerForClone={()=>document.body }
+                    getContainerForClone={() => document.body}
                     direction={"vertical"}
                   >
                     {(provided) => (
@@ -379,6 +388,7 @@ const GroupList = forwardRef<GroupListHandler, GroupListPropsType>(
                           props,
                           data,
                           depthPaddingLeft,
+                          getItemHref: props.getItemHref,
                         }}
                       >
                         {RowRenderer}
@@ -432,6 +442,7 @@ const RowRenderer = memo<
     props: GroupListPropsType;
     data: GroupListDataType;
     depthPaddingLeft: number;
+    getItemHref?: GroupListPropsType["getItemHref"];
   }>
 >(({ index, style, data: _data }) => {
   const {
@@ -445,12 +456,14 @@ const RowRenderer = memo<
     props,
     data,
     depthPaddingLeft,
+    getItemHref,
   } = _data;
   const id = listItemsIds[index];
   const itemData = data[id].data;
   const isExpanded = viewStates.expanded.includes(id);
   const isSelected = viewStates.selected.includes(id);
   const isFocused = viewStates.focused === id;
+  const href = !data[id].isFolder ? getItemHref?.(itemData) : undefined;
 
   // 渲染每一行的逻辑
   return (
@@ -482,6 +495,7 @@ const RowRenderer = memo<
                   isExpanded={isExpanded}
                   isFocused={isFocused}
                   isOnDropOver={isOnDropOver}
+                  href={href}
                   actionDropdownMenu={getDropdownMenu(itemData)}
                   onDataChange={handleItemDataChange}
                   onDeleted={handleOnDelete}
